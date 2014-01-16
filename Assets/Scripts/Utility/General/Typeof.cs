@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 using System;
 
-namespace Utility
+namespace UnnamedUtility
 {
 		public class Typeof
 		{

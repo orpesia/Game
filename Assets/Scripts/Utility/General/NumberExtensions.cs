@@ -8,12 +8,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 using System;
-namespace Game
+
+namespace UnnamedUtility
 {
-	public class FixedSize
-	{
-		public static float Width = 1280.0f;
-		public static float Height = 720.0f;
-	}
+		public static class NumberExtensions
+		{
+			static public float Center ( this float value, float subValue )
+			{
+				return ( value - subValue ) * 0.5f;
+			}
+
+			static public int Center ( this int value, int subValue )
+			{
+				return (int)((( value - subValue ) * 0.5f)+0.5f);
+			}
+		}
 }
 

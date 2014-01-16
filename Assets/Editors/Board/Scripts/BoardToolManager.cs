@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEditor;
+
+using UnnamedUtility;
+using UnnamedResource;
 
 using GameView;
 
@@ -9,14 +12,13 @@ namespace BoardEditor
 {
     class BoardToolManager : MonoBehaviour
     {
+#if UNITY_EDITOR
 		public Color PanelSizeColor = Color.blue;
-		public int MenuWidth = 200;
-		public int MenuHeight = 25;
-		public int MenuTint = 5;
-
-		private int MenuXPos = 0;
-
-
+#endif
+		private int MenuWidth = 180;
+		private int MenuHeight = 25;
+		private int MenuTint = 5;
+		private int MenuItemWidth = 170;
 		private BoardToolProcess m_process = null;
 
 		private const string None = "None";
@@ -25,7 +27,6 @@ namespace BoardEditor
 		private string m_hexHeight = None;
 		private string m_hexAttachX = None;
 		private string m_hexAttachY = None;
-		private string m_hexDistanceX = None;
 		private string m_pixel = None;
 
 		void Awake()
@@ -38,23 +39,36 @@ namespace BoardEditor
 			this.DrawGUI ();
 			this.DrawMenu ();
 		}
-
+	
 		public void DrawGUI()
 		{
-			Color prevColor = Handles.color;
-			Handles.color = PanelSizeColor;
+#if UNITY_EDITOR
+			Color prevColor = UnityEditor.Handles.color;
+			UnityEditor.Handles.color = PanelSizeColor;
 			
-			Handles.DrawLine( new Vector2( 0, BoardToolSize.FixHeight ), new Vector2(BoardToolSize.FixWidth, BoardToolSize.FixHeight));
-			Handles.DrawLine( new Vector2( BoardToolSize.FixWidth, BoardToolSize.FixHeight ), new Vector2(BoardToolSize.FixWidth, 0));
+			UnityEditor.Handles.DrawLine( new Vector2( 0, BoardToolSize.FixHeight ), new Vector2(BoardToolSize.FixWidth, BoardToolSize.FixHeight));
+			UnityEditor.Handles.DrawLine( new Vector2( BoardToolSize.FixWidth, BoardToolSize.FixHeight ), new Vector2(BoardToolSize.FixWidth, 0));
 			
-			Handles.color = prevColor;
+			UnityEditor.Handles.color = prevColor;
+#endif
+
 		}
 		
 		public void DrawMenu()
 		{
-			MenuXPos = Screen.width - MenuWidth;
+			GUIStyle style = GUI.skin.GetStyle("Window"); //Or whatever
+			GUIStyleState backgupState = style.onNormal;
+			style.onNormal = style.normal;
 
-			Rect rect = new Rect( MenuXPos, 0, MenuWidth, MenuHeight );
+			GUI.Window(0, new Rect( Screen.width - MenuWidth * 2, 0, MenuWidth, Screen.height ), BoardWindow, "BoardEditor", style );
+			GUI.Window(1, new Rect( Screen.width - MenuWidth, 0, MenuWidth, Screen.height ), TextureWindow, "TextureEditor", style );
+
+			style.onNormal = backgupState;
+		}
+
+		public void BoardWindow( int id )
+		{
+			Rect rect = new Rect( MenuWidth.Center (MenuItemWidth ), MenuHeight, MenuItemWidth, MenuHeight );
 			if(GUI.Button ( rect, "New Board" ))
 			{
 				m_process.NewBoard();
@@ -63,29 +77,86 @@ namespace BoardEditor
 
 			rect.y += MenuHeight + MenuTint;
 
-			m_hexWidth = this.DoubleField(ref rect, "Hex Width", m_hexWidth);
+			m_hexWidth = this.LabelNText(ref rect, "Hex Width", m_hexWidth);
 			rect.y += MenuHeight + MenuTint;
 			
-			m_hexHeight = this.DoubleField(ref rect, "Hex Height", m_hexHeight);
+			m_hexHeight = this.LabelNText(ref rect, "Hex Height", m_hexHeight);
 			rect.y += MenuHeight + MenuTint;
 
-			m_hexAttachX = this.DoubleField(ref rect, "Hex AttachX", m_hexAttachX);
+			m_hexAttachX = this.LabelNText(ref rect, "Hex AttachX", m_hexAttachX);
 			rect.y += MenuHeight + MenuTint;
 
-			m_hexAttachY = this.DoubleField(ref rect, "Hex AttachY", m_hexAttachY);
+			m_hexAttachY = this.LabelNText(ref rect, "Hex AttachY", m_hexAttachY);
 			rect.y += MenuHeight + MenuTint;
 
-//			m_hexDistanceX = this.DoubleField(ref rect, "Hex DistanceX", m_hexDistanceX);
-//			rect.y += MenuHeight + MenuTint;
-
-			m_pixel = this.DoubleField(ref rect, "Pixel", m_pixel);
+			m_pixel = this.LabelNText(ref rect, "Pixel", m_pixel);
 			rect.y += MenuHeight + MenuTint;
 
 			if(GUI.Button ( rect, "Recreate Vertex" ))
 			{
 				this.UnBinding(m_process.HexagonRenderer);
 			}
+
+		}
+
+		public void TextureWindow( int id )
+		{
+#if UNITY_EDITOR
+			Rect rect = new Rect( MenuWidth.Center (MenuItemWidth ), MenuHeight, MenuItemWidth, MenuHeight );
+			 
+			if(GUI.Button ( rect, "New Atlas"))
+			{
+				string folderPath = UnityEditor.EditorUtility.OpenFolderPanel("Collect Texture", Application.dataPath, "*.png");
+				if( string.IsNullOrEmpty(folderPath))
+				{ 
+					return ;
+				}
+
+				string savePath = UnityEditor.EditorUtility.SaveFilePanel("Save Texture", folderPath, "", "png");
+				if( string.IsNullOrEmpty(savePath))
+				{
+					return ;
+				} 
+
+				List<Texture2D> pathList = new List<Texture2D>();
+
+				string[] inFiles = System.IO.Directory.GetFiles (folderPath);
+				for( int i = 0; i < inFiles.Length; ++i )
+				{
+					string extension = System.IO.Path.GetExtension(inFiles[i]);
+					if( extension == ".PNG" || extension == ".png" )
+					{
+						WWW www = new WWW("file://"+inFiles[i]);
+						pathList.Add (www.texture);
+					} 
+				}
+
+				string prefabPath = System.IO.Path.ChangeExtension(savePath,".prefab"); 
+				int pos = prefabPath.IndexOf("Assets");
+				string pp = prefabPath.Substring(pos);
+				GameObject prefabObject = UnityEditor.PrefabUtility.CreateEmptyPrefab(pp) as GameObject;
+				TextureAtlas atlas = prefabObject.AddComponent<TextureAtlas>();
+
+				TextureAtlasGenerator.Create (savePath, pathList.ToArray(), atlas);
+
+				UnityEditor.AssetDatabase.Refresh(UnityEditor.ImportAssetOptions.ForceUpdate);
 			
+				                                                                      
+			}
+			
+			rect.y += MenuHeight + MenuTint;
+			if(GUI.Button ( rect, "Save Atlas"))
+			{
+
+			}
+			
+			rect.y += MenuHeight + MenuTint;
+			if(GUI.Button ( rect, "Load Atlas"))
+			{
+			}
+
+			rect.y += MenuHeight + MenuTint;
+#endif		
 		}
 
 		private void Binding( HexagonBoardRenderer renderer)
@@ -94,7 +165,6 @@ namespace BoardEditor
 			m_hexHeight = m_process.HexagonRenderer.HexagonHeight.ToString();
 			m_hexAttachX = m_process.HexagonRenderer.HexagonAttachX.ToString();
 			m_hexAttachY = m_process.HexagonRenderer.HexagonAttachY.ToString();
-//			m_hexDistanceX = m_process.HexagonRenderer.HexagonDistanceX.ToString();
 
 			m_pixel = m_process.HexagonRenderer.Pixel.ToString();
 		}
@@ -107,25 +177,26 @@ namespace BoardEditor
 				m_process.HexagonRenderer.HexagonHeight = RegulateValue( 0.5f, 1.0f, m_hexHeight );
 				m_process.HexagonRenderer.HexagonAttachX = RegulateValue( 0.5f, 1.0f, m_hexAttachX );
 				m_process.HexagonRenderer.HexagonAttachY = RegulateValue( 0.5f, 1.0f, m_hexAttachY );
-//				m_process.HexagonRenderer.HexagonDistanceX = RegulateValue( 0.0f, 10.0f, m_hexDistanceX );
 				m_process.HexagonRenderer.Pixel = RegulateValue( 40.0f, 300.0f, m_pixel );
 
 				m_process.ReplaceBoard();
 			}
 		}
 
-		private string DoubleField( ref Rect rect, string name, string value )
+		private string LabelNText( ref Rect rect, string name, string value )
 		{
-			rect.x = MenuXPos;
-			rect.width = MenuWidth * 0.5f;
+			float halfWidth = MenuItemWidth * 0.5f;
+			float prevX = rect.x;
+
+			rect.width = halfWidth;
 			GUI.Label (rect, name );
 
-			rect.x = MenuXPos + rect.width;
+			rect.x = halfWidth;
 
 			string result = GUI.TextField( rect, value );
 
-			rect.x = MenuXPos;
-			rect.width = MenuWidth;
+			rect.x = prevX;
+			rect.width = MenuItemWidth;
 
 			return result;
 		}

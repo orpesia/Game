@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-public class EditorBuildScript
+namespace UnnamedEditor{
+
+public class SceneBuilder
 {
-	const string MacroName = "NM";
+	const string MacroName = "SceneBuilder";
 	const string ProjectName = "Game";
 	
 	[MenuItem(MacroName + "/Build/Window")]
@@ -101,3 +103,5 @@ public class EditorBuildScript
 	private static string[] scenes = _FindEnabledEditorScenes();
 }
 
+
+}

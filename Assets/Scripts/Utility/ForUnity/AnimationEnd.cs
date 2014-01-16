@@ -10,7 +10,7 @@
 using System;
 using UnityEngine;
 
-namespace Utility
+namespace UnnamedUtility
 {
 	public class AnimationEnd : MonoBehaviour
 	{

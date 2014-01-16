@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Utility
+namespace UnnamedUtility
 {
     public static class CameraExtensions
     {

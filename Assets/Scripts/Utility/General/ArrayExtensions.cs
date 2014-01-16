@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Utility
+namespace UnnamedUtility
 {
 
     public static class ArrayExtensions

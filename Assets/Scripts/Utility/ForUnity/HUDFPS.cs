@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Utility
+namespace UnnamedUtility
 {
 
     public class HUDFPS : MonoBehaviour

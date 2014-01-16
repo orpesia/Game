@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Utility
+namespace UnnamedUtility
 {
 	public class PrefabPool
 	{

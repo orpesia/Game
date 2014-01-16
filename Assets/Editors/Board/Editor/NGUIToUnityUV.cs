@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace EditorUtils
+namespace NEditorUtils
 {
     public class NGUIToUnityUV
     {

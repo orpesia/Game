@@ -31,9 +31,10 @@ namespace UnnamedResource
 
 			System.IO.File.WriteAllBytes(savePath, newTexture.EncodeToPNG());
 
-			newTexture = null;
-
+			atlas.Target = newTexture;
 			atlas.BindTextures( textures, rects );
+			newTexture = null;
+			
 		}
 
 	}

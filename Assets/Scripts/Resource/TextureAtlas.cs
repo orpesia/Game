@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 using System.Collections.Generic;
@@ -6,7 +7,8 @@ namespace UnnamedResource{
 
 	public class TextureAtlas : MonoBehaviour
 	{
-		private Dictionary<string, Rect> m_textures = new Dictionary<string, Rect>();
+		[SerializeField] public Texture2D Target { get; set; }
+		[SerializeField] public Dictionary<string, Rect> Textures = new Dictionary<string, Rect>();
 
 		public TextureAtlas ()
 		{
@@ -30,7 +32,7 @@ namespace UnnamedResource{
 
 		public void AddTexture(Texture2D texture, Rect uv)
 		{
-			m_textures.Add (texture.name, uv);
+			Textures.Add (texture.name, uv);
 		}
 
 }

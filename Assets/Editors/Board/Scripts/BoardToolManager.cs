@@ -127,21 +127,39 @@ namespace BoardEditor
 					if( extension == ".PNG" || extension == ".png" )
 					{
 						WWW www = new WWW("file://"+inFiles[i]);
-						pathList.Add (www.texture);
+						Texture2D wwwTex = www.texture as Texture2D; 
+						wwwTex.name = System.IO.Path.GetFileName(inFiles[i]);
+						pathList.Add (wwwTex);
 					} 
 				}
 
-				string prefabPath = System.IO.Path.ChangeExtension(savePath,".prefab"); 
-				int pos = prefabPath.IndexOf("Assets");
-				string pp = prefabPath.Substring(pos);
-				GameObject prefabObject = UnityEditor.PrefabUtility.CreateEmptyPrefab(pp) as GameObject;
-				TextureAtlas atlas = prefabObject.AddComponent<TextureAtlas>();
+				string saveName = System.IO.Path.GetFileNameWithoutExtension(savePath);
+				GameObject atlasObject = new GameObject(saveName);
+				atlasObject.transform.parent = transform;
 
+				TextureAtlas atlas = atlasObject.AddComponent<TextureAtlas>();
 				TextureAtlasGenerator.Create (savePath, pathList.ToArray(), atlas);
 
+				string prefabPath = System.IO.Path.ChangeExtension(savePath,".prefab"); 
+				prefabPath = this.SplitAssetPath(prefabPath);
+
+				UnityEngine.Object prefabObject = UnityEditor.PrefabUtility.CreateEmptyPrefab( this.SplitAssetPath(prefabPath));
+				UnityEditor.PrefabUtility.ReplacePrefab(atlasObject, prefabObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
+//				GameObject prefabObject = UnityEditor.PrefabUtility.CreatePrefab(prefabPath, atlasObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
+
+
+//				UnityEditor.AssetDatabase.AddObjectToAsset(atlasObject,prefabPath);
+//				UnityEditor.AssetDatabase.ImportAsset(prefabPath, UnityEditor.ImportAssetOptions.ForceUpdate);
+//				GameObject prefabObject = UnityEditor.AssetDatabase.GetAssetPath(prefabPath) as GameObject;
+				UnityEditor.EditorUtility.SetDirty(prefabObject);
+
+
+				UnityEditor.AssetDatabase.SaveAssets();
 				UnityEditor.AssetDatabase.Refresh(UnityEditor.ImportAssetOptions.ForceUpdate);
-			
-				                                                                      
+
+//				GameObject.Destroy(atlasObject);
+				
+				
 			}
 			
 			rect.y += MenuHeight + MenuTint;
@@ -223,6 +241,11 @@ namespace BoardEditor
 			return result;
 		}
 
+		private string SplitAssetPath(string path)
+		{
+			int index = path.IndexOf("Assets");
+			return path.Substring(index);
+		}
 		
     }
 }

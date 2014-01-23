@@ -28,7 +28,7 @@ namespace GameView
         {
         }
 
-        void Awake()
+        public void Awake()
         {
 			MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
 			meshRenderer.sharedMaterial = new Material(Shader.Find ("Mobile/VertexLit"));

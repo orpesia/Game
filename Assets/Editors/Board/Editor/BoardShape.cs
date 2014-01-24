@@ -35,11 +35,9 @@ namespace BoardEditor
 			float heightTerm = pixel * HeightTerm;
 
 			float advanceX = width * 0.5f; //센터.
-//			int advanceXCount = 0;
 
 			while( advanceX + width < size.x )
 			{
-//				Debug.Log (advanceX);
 
 				List<Vector2> vertical = new List<Vector2>();
 
@@ -55,8 +53,6 @@ namespace BoardEditor
 				data.container.Add ( vertical );
 
 				advanceX += widthTerm;
-//				advanceX += widthTerm;
-//				++advanceXCount;
 
 				data.innerSize.x = Math.Max (advanceX, data.innerSize.x );
 				data.innerSize.y = Math.Max (advanceY, data.innerSize.y );

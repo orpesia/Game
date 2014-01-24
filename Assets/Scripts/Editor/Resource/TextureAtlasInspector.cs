@@ -16,8 +16,8 @@ namespace UnnamedEditor
 			foreach( KeyValuePair<string, Rect> pair in atlas.Textures )
 			{
 				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField (pair.Key);
-				EditorGUILayout.RectField(pair.Value);
+				EditorGUILayout.LabelField (pair.Key, GUILayout.Height(20));
+				EditorGUILayout.RectField(pair.Value, GUILayout.Height(50));
 				EditorGUILayout.EndHorizontal();
 			}
 		}

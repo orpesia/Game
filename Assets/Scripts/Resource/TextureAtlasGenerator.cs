@@ -25,6 +25,23 @@ namespace UnnamedResource
 
 		static public void Create( string savePath, Texture2D[] textures, TextureAtlas atlas )
 		{
+			for( int i = 0; i < textures.Length; ++i )
+			{
+				string assetPath = AssetDatabase.GetAssetPath(textures[i]);
+				TextureImporter importer = TextureImporter.GetAtPath(assetPath) as TextureImporter;
+				if( null == importer )
+				{
+					continue;
+				}
+
+				importer.textureType = TextureImporterType.Advanced;
+				importer.mipmapEnabled = false;
+				importer.isReadable = true;
+
+				AssetDatabase.ImportAsset( assetPath, ImportAssetOptions.ForceUpdate );
+			}
+//			AssetDatabase.SaveAssets();
+
 			Texture2D newTexture = new Texture2D( 2048, 2048, TextureFormat.ARGB32, false);
 			Rect[] rects = newTexture.PackTextures( textures, 4, 2048 );
 			newTexture.Apply ();

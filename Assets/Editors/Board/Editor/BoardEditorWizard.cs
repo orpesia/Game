@@ -35,8 +35,9 @@ namespace BoardEditor
 		private float m_blockPixel;
 
 		//block
-		private Vector2 m_scrollbar; 
-
+		private Vector2 m_scrollbar;
+		private GameObject m_blockAtlas;
+		 
 		void OnWizardUpdate()
 		{
 
@@ -122,10 +123,32 @@ namespace BoardEditor
 
 		public void BlockWindow( int id )
 		{
-
-			if( GUILayout.Button ("New") )
+			EditorGUILayout.ObjectField(m_blockAtlas, typeof(GameObject), true);
+			if( GUILayout.Button ("Select Atlas") )
 			{
-				BoardEditorTextureWizard.ShowWizard(null, Path.GetSelectionPath());
+				BoardEditorAtlasSelectorWizard.ShowWizard
+				( 
+                 	(GameObject select ) => 
+          			{ 
+						m_blockAtlas = select; 
+
+						Repaint ();
+					} 
+				);
+			}
+
+
+			if( GUILayout.Button ("Save") )
+			{
+			}
+
+			if(GUILayout.Button ("Load"))
+			{
+			}
+
+			if( GUILayout.Button ("Add") )
+			{
+//				BoardEditorTextureWizard.ShowWizard(null, Path.GetSelectionPath());
 			}
 
 			GUILayout.Button ("Load");

@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 114: {fileID: 11400000}
   m_Layer: 0
-  m_Name: Unnamed
+  m_Name: 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38,6 +38,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b8cc63d632d1945b1b8aca635f4628, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Target: {fileID: 2800000, guid: 30e8bc1afbebed94d82dcc30f71da9f5, type: 3}
+  Textures:
+  - name: EnableTexture
+    path: Assets/Editors/Board/Texture/EnableTexture.png
+    UV:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: .5
+      height: .5
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

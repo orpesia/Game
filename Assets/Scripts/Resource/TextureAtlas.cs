@@ -7,32 +7,47 @@ namespace UnnamedResource{
 
 	public class TextureAtlas : MonoBehaviour
 	{
-		[SerializeField] public Texture2D Target { get; set; }
-		[SerializeField] public Dictionary<string, Rect> Textures = new Dictionary<string, Rect>();
+		[Serializable]
+		public class Atlas
+		{
+			public string name;
+			public string path;
+			public Rect UV; 
+		};
+
+		[HideInInspector][SerializeField] public Texture2D Target;
+		[HideInInspector][SerializeField] public List<Atlas> Textures = new List<Atlas>();
 
 		public TextureAtlas ()
 		{
 		}
 
-		public bool BindTextures( Texture2D[] texs, Rect[] uvs )
+		public bool BindTextures( string[] name, string[] paths, Rect[] uvs )
 		{
-			if( texs.Length != uvs.Length )
+			if( name.Length != uvs.Length )
 			{
 				return false;
 			}
 
-			for( int i = 0; i < texs.Length; ++i )
+			for( int i = 0; i < name.Length; ++i )
 			{
-				this.AddTexture(texs[i], uvs[i]);
+				this.AddTexture(name[i], paths[i], uvs[i]);
 			}
-
+			 
 			return true;
 
 		}
 
-		public void AddTexture(Texture2D texture, Rect uv)
+		public void AddTexture(string name, string path, Rect uv)
 		{
-			Textures.Add (texture.name, uv);
+			Atlas atlas = new Atlas();
+			atlas.name 	= name;
+			atlas.path 	= path;
+			atlas.UV	= uv;
+
+			Textures.Add (atlas);
+
+
 		}
 
 }

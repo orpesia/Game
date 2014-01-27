@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 114: {fileID: 11400000}
   m_Layer: 0
-  m_Name: Unnamed
+  m_Name: 2525
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38,32 +38,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b8cc63d632d1945b1b8aca635f4628, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Target: {fileID: 2800000, guid: 3ae337a06ef75724a93a75926da9cdc0, type: 3}
+  Target: {fileID: 2800000, guid: db477389256845745a6e47c44b3c79d0, type: 3}
   Textures:
-  - name: EnableTexture
-    path: Assets/Editors/Board/Texture/EnableTexture.png
-    UV:
-      serializedVersion: 2
-      x: .35546875
-      y: 0
-      width: .25
-      height: .5
   - name: blankblock
     path: Assets/Editors/Board/Texture/blankblock.png
     UV:
       serializedVersion: 2
       x: 0
       y: 0
-      width: .33984375
+      width: .6796875
       height: .78125
-  - name: DisableTexture
-    path: Assets/Editors/Board/Texture/DisableTexture.png
-    UV:
-      serializedVersion: 2
-      x: .62109375
-      y: 0
-      width: .25
-      height: .5
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

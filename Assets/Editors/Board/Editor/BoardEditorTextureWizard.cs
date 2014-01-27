@@ -38,6 +38,21 @@ namespace BoardEditor
 		{
 		}
 
+		[MenuItem("Assets/" + Named.Title + "/Edit Atlas")]
+		public static void CreateAtlas()
+		{
+			GameObject targetObject = UnityEditor.Selection.activeObject as GameObject;
+			if( null == targetObject || null == targetObject.GetComponent<TextureAtlas>() )
+			{
+				ShowWizard(null, UnnamedUtility.Path.GetSelectionPath());
+			}
+			else
+			{
+				ShowWizard(targetObject, UnnamedUtility.Path.GetSelectionPath());
+			}
+
+		}
+
 		public static void ShowWizard(GameObject prefab, string savePath)
 		{
 			if( null != prefab && null == prefab.GetComponent<TextureAtlas>() )
@@ -50,13 +65,9 @@ namespace BoardEditor
 			BoardEditorTextureWizard wizard = ScriptableWizard.DisplayWizard<BoardEditorTextureWizard>("Texture Editor");
 			wizard.minSize = wizard.maxSize = new Vector2( 900, 600 );
 			wizard.m_savePath = savePath;
-		
-			if( null != prefab )
-			{
-				wizard.Replace (prefab);
-			}
-		
+			wizard.m_prefab = prefab;
 
+			wizard.Replace ();
 		}
 
 		void OnWizardUpdate()
@@ -66,9 +77,6 @@ namespace BoardEditor
 
 		void OnGUI()
 		{
-			GUIStyle style = GUI.skin.GetStyle("Button");
-			style.stretchWidth = true;
-			style.stretchHeight = false;
 			System.Func<string, bool> Less = (string name) => 
 			{
 				foreach( BoardTextureData d in m_textures )
@@ -89,16 +97,16 @@ namespace BoardEditor
 				{
 					Texture2D texture = DragAndDrop.objectReferences[i] as Texture2D;
 					if( null == texture )
-					{
+					{ 
 						continue;
 					}
 
 					string texturePath = AssetDatabase.GetAssetPath(texture);
-					string name = System.IO.Path.GetFileName(texturePath);
+					string name = System.IO.Path.GetFileNameWithoutExtension(texturePath);
 
 					if( true == Less(name) )
 					{
-						continue;
+						continue; 
 					}
 
 					BoardTextureData data  = new BoardTextureData();
@@ -148,51 +156,58 @@ namespace BoardEditor
 			m_name = EditorGUILayout.TextField(m_name, GUILayout.Width (200));
 			EditorGUILayout.EndHorizontal();
 
+			EditorGUILayout.ObjectField(m_prefab, typeof(TextureAtlas), true );
 
-			if( GUILayout.Button ("Save", GUILayout.Height (30) ))
+			if( null == m_prefab )
 			{
-				string texturePath = m_savePath + "/" + m_name + ".png";
-
-				string[] paths = new string[m_textures.Count];
-				for( int i = 0; i < paths.Length; ++i )
-				{
-					paths[i] = m_textures[i].path;
-				}
-
-
-				string prefabPath = m_savePath + "/" + m_name + ".prefab";
-				if( null == m_prefab )
-				{
-					GameObject prefab = new GameObject(m_name);
-					TextureAtlas atlas = prefab.AddComponent<TextureAtlas>();
-
-					TextureAtlasGenerator.Create ( texturePath, paths, atlas );
-				
-					UnityEngine.Object emptyPrefab = PrefabUtility.CreateEmptyPrefab(prefabPath);
-					GameObject newPrefab = PrefabUtility.ReplacePrefab(prefab, emptyPrefab, ReplacePrefabOptions.ConnectToPrefab);
-//					AssetDatabase.ImportAsset(prefabPath, ImportAssetOptions.ForceUpdate);
-					EditorUtility.SetDirty(newPrefab);
+				if( GUILayout.Button ("New", GUILayout.Height (30)))
+				{ 
+					string prefabPath = m_savePath + "/" + m_name + ".prefab";
 					
-					GameObject.DestroyImmediate( prefab );
+					m_prefab = new GameObject( m_name );
+					m_prefab.AddComponent<TextureAtlas>(); 
 					 
-					this.Replace(newPrefab);
+					UnityEngine.Object emptyPrefab = PrefabUtility.CreateEmptyPrefab(prefabPath);
+					PrefabUtility.ReplacePrefab(m_prefab, emptyPrefab);
 
+					AssetDatabase.SaveAssets();
+					AssetDatabase.Refresh();
 					
+					GameObject.DestroyImmediate( m_prefab );
+					
+					m_prefab = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject)) as GameObject;
+
+					this.Replace();
+
+
 				}
-				else
+			}
+			else
+			{
+				if( GUILayout.Button ("Save", GUILayout.Height (30) ))
 				{
+					string texturePath = m_savePath + "/" + m_name + ".png";
+					string[] paths = new string[m_textures.Count];
+					for( int i = 0; i < paths.Length; ++i )
+					{
+						paths[i] = m_textures[i].path;
+					}
+
 					TextureAtlas atlas = m_prefab.GetComponent<TextureAtlas>();
+					atlas.name = "TextureAtlas";
 					atlas.Target = null;
 					atlas.Textures.Clear ();
-
+					 
 					TextureAtlasGenerator.Create ( texturePath, paths, atlas );
-
-					EditorUtility.SetDirty(m_prefab);
-					
+					 
+					AssetDatabase.SaveAssets();
+					AssetDatabase.Refresh();
+	
+					this.Replace ();
 				}
+			}	
 
-				AssetDatabase.Refresh();
-			}
+	
 		}
 
 		void TextureWindow( int id )
@@ -223,27 +238,30 @@ namespace BoardEditor
 			EditorGUILayout.EndVertical();
 		}
 
-		private void Replace(GameObject prefab)
+		private void Replace()
 		{
 			m_textures.Clear ();
 
-			TextureAtlas atlas = prefab.GetComponent<TextureAtlas>();
-			m_name = atlas.name;
-			m_texture = atlas.Target;
-			
-			foreach( KeyValuePair<String,Rect> v in atlas.Textures )
+			if( null == m_prefab )
 			{
-				Texture2D texture = AssetDatabase.LoadAssetAtPath(v.Key, typeof(Texture2D)) as Texture2D;
+				return ;
+			}
+
+			TextureAtlas atlas = m_prefab.GetComponent<TextureAtlas>();
+			m_name 		= atlas.name;
+			m_texture 	= atlas.Target;
+			 
+			foreach( TextureAtlas.Atlas v in atlas.Textures )
+			{
+				Texture2D texture = AssetDatabase.LoadAssetAtPath(v.path, typeof(Texture2D)) as Texture2D;
 				
 				BoardTextureData data  = new BoardTextureData();
 				data.isMissing = null == texture ? true : false;
-				data.path = v.Key;
-				data.name = System.IO.Path.GetFileName(v.Key);
+				data.path = v.path;
+				data.name = v.name;
 				
 				m_textures.Add (data);
 			}
-			
-			m_prefab = prefab;
 		}
 	}
 }

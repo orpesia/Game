@@ -46,8 +46,19 @@ namespace UnnamedResource{
 			atlas.UV	= uv;
 
 			Textures.Add (atlas);
+		}
 
+		public Atlas GetAtlasByName(string name)
+		{
+			foreach(Atlas atlas in Textures )
+			{
+				if( atlas.name == name )
+				{
+					return atlas;
+				}
+			}
 
+			return null;
 		}
 
 }

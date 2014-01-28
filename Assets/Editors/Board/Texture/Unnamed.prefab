@@ -44,26 +44,66 @@ MonoBehaviour:
     path: Assets/Editors/Board/Texture/EnableTexture.png
     UV:
       serializedVersion: 2
-      x: .35546875
+      x: .804199219
       y: 0
-      width: .25
-      height: .5
+      width: .03125
+      height: .03125
   - name: blankblock
     path: Assets/Editors/Board/Texture/blankblock.png
     UV:
       serializedVersion: 2
-      x: 0
+      x: .759765625
       y: 0
-      width: .33984375
-      height: .78125
+      width: .0424804688
+      height: .048828125
   - name: DisableTexture
     path: Assets/Editors/Board/Texture/DisableTexture.png
     UV:
       serializedVersion: 2
-      x: .62109375
+      x: .837402344
       y: 0
-      width: .25
+      width: .03125
+      height: .03125
+  - name: "\uC0C8 \uCE94\uBC84\uC2A4"
+    path: "Assets/Editors/Board/Texture/\uC0C8 \uCE94\uBC84\uC2A4.jpg"
+    UV:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: .5
       height: .5
+  - name: warcraft-5-icon
+    path: Assets/Editors/Board/Texture/warcraft-5-icon.png
+    UV:
+      serializedVersion: 2
+      x: .501953125
+      y: 0
+      width: .0625
+      height: .0625
+  - name: warcraft-3-icon
+    path: Assets/Editors/Board/Texture/warcraft-3-icon.png
+    UV:
+      serializedVersion: 2
+      x: .56640625
+      y: 0
+      width: .0625
+      height: .0625
+  - name: warcraft-4-icon
+    path: Assets/Editors/Board/Texture/warcraft-4-icon.png
+    UV:
+      serializedVersion: 2
+      x: .630859375
+      y: 0
+      width: .0625
+      height: .0625
+  - name: warcraft-2-icon
+    path: Assets/Editors/Board/Texture/warcraft-2-icon.png
+    UV:
+      serializedVersion: 2
+      x: .6953125
+      y: 0
+      width: .0625
+      height: .0625
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

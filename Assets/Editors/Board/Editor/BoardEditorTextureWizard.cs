@@ -50,7 +50,6 @@ namespace BoardEditor
 			{
 				ShowWizard(targetObject, UnnamedUtility.Path.GetSelectionPath());
 			}
-
 		}
 
 		public static void ShowWizard(GameObject prefab, string savePath)
@@ -123,15 +122,14 @@ namespace BoardEditor
 			}
 
 
-			
 			if( null == m_texture )
-			{
+			{ 
 				GUI.DrawTexture(new Rect(0, 0, 600, 600 ), EditorGUIUtility.whiteTexture );
 			}
 			else
 			{
 				int max = Math.Max (m_texture.width, m_texture.height);
-				float ratio = 600 / max;
+				float ratio = 600.0f / max;
 				
 				GUI.DrawTexture(new Rect(0, 0, m_texture.width * ratio, m_texture.height * ratio ), m_texture );
 			}

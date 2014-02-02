@@ -19,7 +19,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_ANDROID;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;UNITY_ANDROID_API;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_1;UNITY_4_3;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_ANDROID;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;UNITY_ANDROID_API;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_0;UNITY_4_3;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -39,10 +39,10 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>D:/Program Files/Unity4.0/Editor/Data/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>D:/Program Files/Unity4.0/Editor/Data/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
@@ -193,12 +193,14 @@
      <Compile Include="Assets\Editors\Board\Scripts\BoardToolSize.cs" />
      <Compile Include="Assets\Root.cs" />
      <Compile Include="Assets\Scripts\Object\HexagonVertex.cs" />
+     <Compile Include="Assets\Scripts\Resource\TestResource.cs" />
      <Compile Include="Assets\Scripts\Resource\TextureAtlas.cs" />
      <Compile Include="Assets\Scripts\Resource\TextureAtlasGenerator.cs" />
      <Compile Include="Assets\Scripts\Utility\ForUnity\AnimationEnd.cs" />
      <Compile Include="Assets\Scripts\Utility\ForUnity\CameraExtension.cs" />
      <Compile Include="Assets\Scripts\Utility\ForUnity\Display.cs" />
      <Compile Include="Assets\Scripts\Utility\ForUnity\HUDFPS.cs" />
+     <Compile Include="Assets\Scripts\Utility\ForUnity\Path.cs" />
      <Compile Include="Assets\Scripts\Utility\ForUnity\PrefabPool.cs" />
      <Compile Include="Assets\Scripts\Utility\General\BitMacro.cs" />
      <Compile Include="Assets\Scripts\Utility\General\BitValue.cs" />
@@ -207,8 +209,13 @@
      <Compile Include="Assets\Scripts\Utility\General\Extensions\NumberExtensions.cs" />
      <Compile Include="Assets\Scripts\Utility\General\Extensions\ObjectExtension.cs" />
      <Compile Include="Assets\Scripts\Utility\General\Extensions\VectorExtension.cs" />
+     <Compile Include="Assets\Scripts\Utility\General\Multiple.cs" />
      <Compile Include="Assets\Scripts\Utility\General\Typeof.cs" />
      <Compile Include="Assets\Scripts\Utility\Parser\CSVReader.cs" />
+     <Compile Include="Assets\Scripts_Game\Game\BoardType.cs" />
+     <Compile Include="Assets\Scripts_Game\Game\Data\BlockProperty.cs" />
+     <Compile Include="Assets\Scripts_Game\Game\Data\BoardData.cs" />
+     <Compile Include="Assets\Scripts_Game\Game\Data\HexagonBoardData.cs" />
      <Compile Include="Assets\Scripts_Game\Game\Data\HexagonData.cs" />
      <Compile Include="Assets\Scripts_Game\Game\FixedSize.cs" />
      <Compile Include="Assets\Scripts_Game\Game\View\HexagonBoardRenderer.cs" />

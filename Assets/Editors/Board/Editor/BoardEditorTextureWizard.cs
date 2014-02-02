@@ -38,7 +38,7 @@ namespace BoardEditor
 		{
 		}
 
-		[MenuItem("Assets/" + Named.Title + "/Edit Atlas")]
+		[MenuItem("Assets/" + Named.Title + "/Atlas Editor")]
 		public static void CreateAtlas()
 		{
 			GameObject targetObject = UnityEditor.Selection.activeObject as GameObject;
@@ -193,7 +193,7 @@ namespace BoardEditor
 
 					TextureAtlas atlas = m_prefab.GetComponent<TextureAtlas>();
 					atlas.name = "TextureAtlas";
-					atlas.Target = null;
+					atlas.TargetTexture = null;
 					atlas.Textures.Clear ();
 					 
 					TextureAtlasGenerator.Create ( texturePath, paths, atlas );
@@ -247,7 +247,7 @@ namespace BoardEditor
 
 			TextureAtlas atlas = m_prefab.GetComponent<TextureAtlas>();
 			m_name 		= atlas.name;
-			m_texture 	= atlas.Target;
+			m_texture 	= atlas.TargetTexture;
 			 
 			foreach( TextureAtlas.Atlas v in atlas.Textures )
 			{

@@ -7,18 +7,22 @@
 //     이러한 변경 내용이 손실됩니다.
 // </auto-generated>
 //------------------------------------------------------------------------------
+using System.Collections.Generic;
 using UnityEngine;
 
 using Game;
 
 namespace GameData
 {
+	using BlockProperties = List<List<BlockProperty>>;
+	
+	[System.Serializable]
 	public class BlockProperty
 	{
-		public int 			GenerateType 	= BlockGenerateType.Random.ToInt ();
-		public int 			ItemType 		= BlockItemType.Blank.ToInt ();
-		public Vector2 		Vertex;
-		public string[] 	DurabilityStack;
+	 	public int 			GenerateType 	= BlockGenerateType.Random.ToInt ();
+	 	public int 			ItemType 		= BlockItemType.Blank.ToInt ();
+	 	public Vector2 		Position;
 	}
+
 }
 

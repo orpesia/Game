@@ -9,11 +9,11 @@ namespace UnnamedEditor
 	[CustomEditor(typeof(TextureAtlas))]
 	public class TextureAtlasInspector : Editor
 	{
-		private int m_select = 0;
-
 		public override void OnInspectorGUI()
 		{
 			TextureAtlas textureAtlas = target as TextureAtlas;
+
+			GUILayout.Button ( textureAtlas.TargetTexture, GUILayout.Width (256), GUILayout.Height (256) );
 
 			for( int i = 0; i < textureAtlas.Textures.Count; ++i )
 			{
@@ -22,29 +22,22 @@ namespace UnnamedEditor
 				EditorGUILayout.LabelField ("Name - " + atlas.name, GUILayout.Height(20));
 				EditorGUILayout.LabelField (atlas.path, GUILayout.Height(20));
 				EditorGUILayout.RectField(atlas.UV, GUILayout.Height(50));
-
-//				if( GUILayout.Button (atlas.name, GUILayout.Height (20)) ) 
-//				{
-//					m_select = i;
-//
-//					OnPreviewGUI(GUILayoutUtility.GetRect(500, 500), EditorStyles.whiteLabel);
-//				}
 			}
 		}
 
-		public override void OnPreviewGUI (Rect rect, GUIStyle background)
-		{
-//			base.OnPreviewGUI(rect, background);
-			TextureAtlas atlas = target as TextureAtlas;
-//			if( atlas.Textures.Count >= m_select )
+//		public override void OnPreviewGUI (Rect rect, GUIStyle background)
+//		{
+////			base.OnPreviewGUI(rect, background);
+//			TextureAtlas atlas = target as TextureAtlas;
+////			if( atlas.Textures.Count >= m_select )
+////			{
+////				GUI.DrawTextureWithTexCoords(new Rect( 0, 0, 256, 256 ), atlas.Target, atlas.Textures[m_select].UV);
+////			}
+////			else 
 //			{
-//				GUI.DrawTextureWithTexCoords(new Rect( 0, 0, 256, 256 ), atlas.Target, atlas.Textures[m_select].UV);
+//				GUI.DrawTexture(new Rect( 0, 0, 256, 256 ), atlas.TargetTexture, ScaleMode.StretchToFill);
 //			}
-//			else 
-			{
-				GUI.DrawTexture(new Rect( 0, 0, 256, 256 ), atlas.Target, ScaleMode.StretchToFill);
-			}
-		}
+//		}
 
 	}
 

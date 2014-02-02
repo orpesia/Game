@@ -48,7 +48,7 @@ namespace BoardEditor
 			for( int i = 0; i < m_atlas.Length; ++i )
 			{
 				GUILayout.Label(m_atlas[i].name);
-				if(GUILayout.Button (new GUIContent(m_atlas[i].Target), GUILayout.Width (230), GUILayout.Height (230) ) )
+				if(GUILayout.Button (new GUIContent(m_atlas[i].TargetTexture), GUILayout.Width (230), GUILayout.Height (230) ) )
 				{
 					m_delegate(m_atlas[i].gameObject);
 

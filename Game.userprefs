@@ -1,25 +1,37 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Editors\Board\Editor\BoardShape.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Editors\Board\Editor\BoardEditorWizard.cs">
     <Files>
-      <File FileName="Assets\Editors\Board\Editor\BoardEditorWizard.cs" Line="23" Column="3" />
+      <File FileName="Assets\Editors\Board\Editor\BoardEditorWizard.cs" Line="172" Column="40" />
       <File FileName="Assets\Editors\Board\Scripts\BoardToolManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Editors\Board\Scripts\BoardToolProcess.cs" Line="1" Column="1" />
-      <File FileName="Assets\Editors\Board\Editor\BoardEditorSize.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts_Game\Game\View\HexagonRenderData.cs" Line="21" Column="37" />
+      <File FileName="Assets\Editors\Board\Editor\BoardEditorSize.cs" Line="21" Column="1" />
+      <File FileName="Assets\Scripts_Game\Game\View\HexagonRenderData.cs" Line="1" Column="1" />
       <File FileName="Assets\3Party\NGUI\Examples\Scripts\InventorySystem\Editor\InvFindItem.cs" Line="1" Column="1" />
       <File FileName="Assets\3Party\NGUI\Scripts\Editor\UICreateNewUIWizard.cs" Line="1" Column="1" />
-      <File FileName="Assets\Editors\Board\Editor\BoardShape.cs" Line="51" Column="10" />
       <File FileName="Assets\Editors\Board\Scripts\BoardToolSize.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts_Game\Game\View\HexagonBoardRenderer.cs" Line="76" Column="5" />
+      <File FileName="Assets\Scripts_Game\Game\View\HexagonBoardRenderer.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts_Game\Game\FixedSize.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Utility\ForUnity\AnimationEnd.cs" Line="1" Column="1" />
       <File FileName="Assets\Editors\Board\Editor\NGUIToUnityUV.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts_Game\Game\Data\HexagonData.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Object\HexagonVertex.cs" Line="60" Column="52" />
+      <File FileName="Assets\Scripts\Object\HexagonVertex.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Utility\General\Extensions\NumberExtensions.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Utility\General\Extensions\VectorExtension.cs" Line="17" Column="4" />
+      <File FileName="Assets\Scripts\Utility\General\Extensions\VectorExtension.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Utility\General\Extensions\ObjectExtension.cs" Line="1" Column="1" />
+      <File FileName="Assets\Editors\Board\Editor\BoardEditorTextureWizard.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts_Game\Game\BoardType.cs" Line="1" Column="1" />
+      <File FileName="Assets\Editors\Board\Editor\BoardShape.cs" Line="46" Column="45" />
+      <File FileName="Assets\Scripts\Utility\General\Multiple.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Utility\General\DBGUtils.cs" Line="1" Column="1" />
+      <File FileName="d:\Projects\Game\Assets\Scripts\Resource\TextureAtlasGenerator.cs" Line="1" Column="1" />
+      <File FileName="d:\Projects\Game\Assets\Editors\Board\Editor\BoardEditorAtlasSelectorWizard.cs" Line="1" Column="1" />
+      <File FileName="d:\Projects\Game\Assets\Editors\Board\Editor\BoardEditorSpriteSelectorWizard.cs" Line="1" Column="1" />
+      <File FileName="d:\Projects\Game\Assets\Scripts\Editor\Resource\TextureAtlasInspector.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts_Game\Game\Data\HexagonBoardData.cs" Line="1" Column="1" />
+      <File FileName="Assets\Editors\Board\Editor\BoardEditorSettingWizard.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Resource\TextureAtlas.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts_Game\Game\Data\BoardData.cs" Line="30" Column="5" />
     </Files>
     <Pads>
       <Pad Id="MonoDevelop.Debugger.WatchPad">

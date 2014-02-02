@@ -64,7 +64,7 @@ namespace BoardEditor
 					this.Close ();
 				}
 
-				GUI.DrawTextureWithTexCoords( new Rect(15, top + 5, textureSize - 10, textureSize - 10 ), m_atlas.Target, m_atlas.Textures[i].UV );
+				GUI.DrawTextureWithTexCoords( new Rect(15, top + 5, textureSize - 10, textureSize - 10 ), m_atlas.TargetTexture, m_atlas.Textures[i].UV );
 
 				top += textureSize + 10;
 			}

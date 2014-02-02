@@ -15,7 +15,7 @@ namespace UnnamedResource{
 			public Rect UV; 
 		};
 
-		[HideInInspector][SerializeField] public Texture2D Target;
+		[HideInInspector][SerializeField] public Texture2D TargetTexture;
 		[HideInInspector][SerializeField] public List<Atlas> Textures = new List<Atlas>();
 
 		public TextureAtlas ()

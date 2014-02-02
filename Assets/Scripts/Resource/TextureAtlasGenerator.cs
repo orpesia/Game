@@ -57,7 +57,7 @@ namespace UnnamedResource
 			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh(); 
 
-			atlas.Target = AssetDatabase.LoadAssetAtPath(savePath, typeof( Texture2D )) as Texture2D;
+			atlas.TargetTexture = AssetDatabase.LoadAssetAtPath(savePath, typeof( Texture2D )) as Texture2D;
 
 			atlas.BindTextures( names, paths, rects );
 			GameObject.DestroyImmediate(newTexture); 

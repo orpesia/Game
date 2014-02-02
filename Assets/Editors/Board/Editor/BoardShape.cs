@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using GameData;
+
 namespace BoardEditor
 {
-	using BatchContainer = List< List<Vector2> >;
+//	using BatchContainer = List< List<BlockProperty> >;
 
 	public class BoardShape
 	{
@@ -17,7 +19,7 @@ namespace BoardEditor
 		public class Data
 		{
 			public Vector2 innerSize = Vector2.zero;
-			public BatchContainer container = new BatchContainer();
+			public BoardData.BlockList container = new BoardData.BlockList();
 		};
 
 		public BoardShape ()
@@ -39,18 +41,20 @@ namespace BoardEditor
 			while( advanceX + width < size.x )
 			{
 
-				List<Vector2> vertical = new List<Vector2>();
+				BoardData.BlockElem vertical = new BoardData.BlockElem();
 
 				float advanceY = HeightTerm + height * 0.5f;
-				float additionY = data.container.Count % 2 == 0 ? 0 : heightTerm;
+				float additionY = data.container.X.Count % 2 == 0 ? 0 : heightTerm;
 
 				while( advanceY + height + additionY < size.y )
 				{
-					vertical.Add ( new Vector2(advanceX, advanceY + additionY ) );
+					BlockProperty property = new BlockProperty();
+					property.Position = new Vector2(advanceX, advanceY + additionY);
+					vertical.Y.Add ( property );
 					advanceY += height;
 				}
 
-				data.container.Add ( vertical );
+				data.container.X.Add ( vertical );
 
 				advanceX += widthTerm;
 

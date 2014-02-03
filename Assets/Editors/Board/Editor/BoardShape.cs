@@ -7,8 +7,6 @@ using GameData;
 
 namespace BoardEditor
 {
-//	using BatchContainer = List< List<BlockProperty> >;
-
 	public class BoardShape
 	{
 		private static float WidthTerm = 0.75f;

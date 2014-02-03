@@ -11,18 +11,28 @@ using System;
 
 namespace Game
 {
+	public enum BlockSettingType
+	{
+		Random = 0,
+		Fixed,
+	};
+
 	public enum BlockGenerateType
 	{
-		Blank = 1001,
-		Random = 1002,
-		Custom = 0,
+		Blank = 0,
+		TypeA = 1,
+		TypeB = 2,
+		TypeC = 3,
+		TypeD = 4,
+		TypeE = 5,
+		Random = 6,
 	}
 
 	public enum BlockItemType
 	{
-		Blank = 1001,
-		Attack = 1002,
-		Skill = 1003,
+		Blank,
+		Attack,
+		Skill,
 	}
 
 	public static class EnumExtension

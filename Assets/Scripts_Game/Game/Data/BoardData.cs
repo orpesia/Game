@@ -42,6 +42,7 @@ namespace GameData
 		[HideInInspector][SerializeField] public Vector2 BoardSize;
 		[HideInInspector][SerializeField] public Vector2 InnerSize;
 		[HideInInspector][SerializeField] public float Pixel;
+		[HideInInspector][SerializeField] public List<Vector2> StartField = new List<Vector2>();
 
 
 		public BoardData ()

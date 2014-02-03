@@ -8,22 +8,26 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 using System.Collections.Generic;
+
 using UnityEngine;
 
-using Game;
+using UnnamedResource;
 
 namespace GameData
 {
-	using BlockProperties = List<List<BlockProperty>>;
-	
-	[System.Serializable]
-	public class BlockProperty
+	public class BoardProperty
 	{
-	 	public int 					GenerateType 	= BlockGenerateType.Random.ToInt ();
-	 	public Game.BlockItemType 	ItemType 		= BlockItemType.Blank;
-	 	public Vector2 				Position;
-		public int 					Durable			= 0;
-	}
+		public TextureAtlas Atlas = null;
+		public List<TextureAtlas.Atlas> BlockAtlas = new List<TextureAtlas.Atlas>();
 
+		public BoardProperty ()
+		{
+		}
+
+		public void SetAtlas( GameObject atlas )
+		{
+			Atlas = atlas.GetComponent<TextureAtlas>();
+		}
+	}
 }
 

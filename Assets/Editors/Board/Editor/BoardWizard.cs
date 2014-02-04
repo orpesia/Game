@@ -53,7 +53,7 @@ namespace BoardEditor
 
 		private Vector2 m_scrollbar;
 		private GameData.BoardData m_boardData;
-		private int m_selected = Game.BlockGenerateType.Random.ToInt ();
+		private int m_selected = (int)Game.GenerateType.RandomSubA;
 
 		//Property
 		private GameData.BlockProperty m_selectProperty = null;
@@ -164,7 +164,7 @@ namespace BoardEditor
 					{
 						if( Event.current.button == 0 ) //left
 						{
-							m_boardData.BlockProperties[x,y].GenerateType = m_selected;
+							m_boardData.BlockProperties[x,y].Generate = (GenerateType)m_selected;
 						}
 
 						if( Event.current.button == 1 ) //right
@@ -180,7 +180,7 @@ namespace BoardEditor
 						GUI.color = new Color32(0,0,255,160);
 					}
 
-					int generateType	= m_boardData.BlockProperties[x,y].GenerateType;
+					int generateType	= (int)m_boardData.BlockProperties[x,y].Generate;
 					Multiple m 			= this.GetDataByGenerate(generateType);
 			
 					GUI.DrawTextureWithTexCoords( rect, m.At<Texture2D>(1), m.At<Rect>(2) );
@@ -284,7 +284,7 @@ namespace BoardEditor
 									continue;
 								} 
 								 
-								data.container[x,y].GenerateType = m_boardData.BlockProperties[x,y].GenerateType;
+								data.container[x,y].Generate = m_boardData.BlockProperties[x,y].Generate;
 								data.container[x,y].ItemType = m_boardData.BlockProperties[x,y].ItemType;
 								data.container[x,y].Durable = m_boardData.BlockProperties[x,y].Durable;
 							}
@@ -350,6 +350,10 @@ namespace BoardEditor
 			}
 		}
 
+
+
+
+
 		public void BlockWindow( int id )
 		{
 			if( GUILayout.Button ("이미지 지정", GUILayout.Height (InnerHeight) ))
@@ -375,7 +379,7 @@ namespace BoardEditor
 						{
 							for( int y = 0; y < m_boardData.BlockProperties[x].Count; ++y )
 							{
-								m_boardData.BlockProperties[x,y].GenerateType = Game.BlockGenerateType.Random.ToInt ();
+								m_boardData.BlockProperties[x,y].Generate = Game.GenerateType.RandomCustomA;
 							}
 						}
 
@@ -396,22 +400,22 @@ namespace BoardEditor
 
 			EditorGUILayout.ObjectField(m_boardData.Atlas, typeof(TextureAtlas), false);
 			
-			if( GUILayout.Button ("추가", GUILayout.Height(InnerHeight)) )
-			{
-				SpriteSelectorWizard.ShowWizard
-				(
-					m_boardData.Atlas, 
-					(TextureAtlas.Atlas atlas) =>
-					{
-						m_boardData.BlockAtlas.Add ( atlas.name );
-
-						EditorUtility.SetDirty (m_boardData);
-						
-						Repaint ();
-					}
-				);
-
-			}
+//			if( GUILayout.Button ("추가", GUILayout.Height(InnerHeight)) )
+//			{
+//				SpriteSelectorWizard.ShowWizard
+//				(
+//					m_boardData.Atlas, 
+//					(TextureAtlas.Atlas atlas) =>
+//					{
+//						m_boardData.BlockAtlas.Add ( atlas.name );
+//
+//						EditorUtility.SetDirty (m_boardData);
+//						
+//						Repaint ();
+//					}
+//				);
+//
+//			}
 
 			m_scrollbar = EditorGUILayout.BeginScrollView(m_scrollbar, GUILayout.Height (480));
 
@@ -435,12 +439,12 @@ namespace BoardEditor
 
 			if( DrawBlock(additionCount++, "공백", m_blankTexture, RECT_ONE ) )
 			{
-				m_selected = Game.BlockGenerateType.Blank.ToInt ();
+				m_selected = (int)Game.GenerateType.Blank;
 			}
 
 			if( DrawBlock(additionCount++, "무작위", m_randomTexture, RECT_ONE ) )
 			{
-				m_selected = Game.BlockGenerateType.Random.ToInt ();
+				m_selected = (int)Game.GenerateType.RandomSubA;
 			}
 
 			for( int i = 0; i < m_boardData.BlockAtlas.Count; ++i )
@@ -475,14 +479,14 @@ namespace BoardEditor
 		{
 			Multiple m = new Multiple(3);
 
-			if( genType == Game.BlockGenerateType.Random.ToInt() )
+			if( genType == (int)Game.GenerateType.RandomSubA)
 			{
 				m.Set(0, "무작위" );
 				m.Set(1, m_randomTexture );
 				m.Set(2, RECT_ONE );
 			}
 
-			else if( genType == Game.BlockGenerateType.Blank.ToInt () )
+			else if( genType == (int)Game.GenerateType.Blank )
 			{
 				m.Set(0, "공백" );
 				m.Set(1, m_blankTexture );

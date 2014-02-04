@@ -8,15 +8,25 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 using System;
+
 using UnityEngine;
+using UnnamedResource;
+
+using Game;
 
 namespace GameData
 {
-	public class HexagonData
+	public class BlockDataSet : MonoBehaviour
 	{
-		public HexagonData ()
+		public TextureAtlas Atlas { get; set; }
+//		public BlockTy
+
+		public BlockDataSet ()
 		{
 		}
+
+
+
 	}
 }
 

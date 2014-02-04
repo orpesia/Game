@@ -20,6 +20,7 @@ namespace UnnamedResource{
 
 		public TextureAtlas ()
 		{
+
 		}
 
 		public bool BindTextures( string[] name, string[] paths, Rect[] uvs )
@@ -33,7 +34,7 @@ namespace UnnamedResource{
 			{
 				this.AddTexture(name[i], paths[i], uvs[i]);
 			}
-			 
+
 			return true;
 
 		}

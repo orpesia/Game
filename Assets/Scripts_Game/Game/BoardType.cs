@@ -11,21 +11,73 @@ using System;
 
 namespace Game
 {
-	public enum BlockSettingType
-	{
-		Random = 0,
-		Fixed,
-	};
-
-	public enum BlockGenerateType
+	public enum GenerateType
 	{
 		Blank = 0,
-		TypeA = 1,
-		TypeB = 2,
-		TypeC = 3,
-		TypeD = 4,
-		TypeE = 5,
-		Random = 6,
+		TypeA,
+		TypeB,
+		TypeC,
+		TypeD,
+		TypeE,
+		TypeA_A,
+		TypeA_B,
+		TypeA_C,
+		TypeB_A,
+		TypeB_B,
+		TypeB_C,
+		TypeC_A,
+		TypeC_B,
+		TypeC_C,
+		RandomSubA,
+		RandomSubB,
+		RandomSubC,
+		RandomPhase,
+
+		RandomCustomA = 1001,
+		RandomCustomB,
+		RandomCustomC,
+		RandomCustomD,
+		RandomCustomE,
+		RandomCustomF,
+		RandomCustomG,
+		RandomCustomH,
+		RandomCustomI,
+		RandomCustomJ,
+	}
+
+	public enum BlockType
+	{
+		Blank = 0,
+		TypeA,
+		TypeB,
+		TypeC,
+		TypeD,
+		TypeE,
+	}
+
+	public enum BlockCode //--> SettingType.Fixed
+	{
+		Blank = ((int)BlockType.Blank) << 4,
+
+		TypeA_A = ((int)BlockType.TypeA) << 4,
+		TypeA_B,
+		TypeA_C,
+		
+		TypeB_A = ((int)BlockType.TypeB) << 4,
+		TypeB_B,
+		TypeB_C,
+		
+		TypeC_A = ((int)BlockType.TypeC) << 4,
+		TypeC_B,
+		TypeC_C,
+
+		TypeD_A = ((int)BlockType.TypeD) << 4,
+		TypeD_B,
+		TypeD_C,
+
+		TypeE_A = ((int)BlockType.TypeE) << 4,
+		TypeE_B,
+		TypeE_C,
 	}
 
 	public enum BlockItemType
@@ -35,18 +87,28 @@ namespace Game
 		Skill,
 	}
 
-	public static class EnumExtension
+
+	static class EnumTypeSupporter
 	{
-		public static int ToInt( this BlockGenerateType type )
+		public static int ToBlockType( this BlockCode type)
 		{
-			return (int)type;
+			return ((int)type) >> 4;
 		}
 
-		public static int ToInt( this BlockItemType type )
-		{
-			return (int)type;
-		}
 	};
+
+//	public static class EnumExtension
+//	{
+//		public static int ToInt( this Enum type )
+//		{
+//			return (int)type;
+//		}
+//
+//		public static int ToInt( this BlockItemType type )
+//		{
+//			return (int)type;
+//		}
+//	};
 
 }
 

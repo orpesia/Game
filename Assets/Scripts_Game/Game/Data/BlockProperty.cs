@@ -19,7 +19,7 @@ namespace GameData
 	[System.Serializable]
 	public class BlockProperty
 	{
-	 	public int 					GenerateType 	= BlockGenerateType.Random.ToInt ();
+		public GenerateType			Generate 		= GenerateType.RandomSubA;
 	 	public Game.BlockItemType 	ItemType 		= BlockItemType.Blank;
 	 	public Vector2 				Position;
 		public int 					Durable			= 0;

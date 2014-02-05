@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using UnnamedResource;
+using Unnamed;
 
-namespace GameData
+namespace Game.Data
 {
 	public class BoardData : MonoBehaviour
 	{
@@ -35,8 +35,7 @@ namespace GameData
 
 		};
 
-		[HideInInspector][SerializeField] public TextureAtlas Atlas = null;
-		[HideInInspector][SerializeField] public List<string> BlockAtlas = new List<string>();
+		[HideInInspector] public BlockDataSet BlockDataSet; //동적으로 붇임.
 
 		[HideInInspector][SerializeField] public BlockList BlockProperties;
 		[HideInInspector][SerializeField] public Vector2 BoardSize;
@@ -47,21 +46,6 @@ namespace GameData
 
 		public BoardData ()
 		{
-		}
-
-		public void SetAtlas( GameObject atlas )
-		{
-			Atlas = atlas.GetComponent<TextureAtlas>();
-		}
-
-		public TextureAtlas.Atlas GetAtlas(int index)
-		{
-			if( null == Atlas || index >= BlockAtlas.Count )
-			{
-				return null;
-			}
-
-			return Atlas.GetAtlasByName(BlockAtlas[index]);
 		}
 	}
 }

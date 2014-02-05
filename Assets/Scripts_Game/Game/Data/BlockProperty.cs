@@ -12,7 +12,7 @@ using UnityEngine;
 
 using Game;
 
-namespace GameData
+namespace Game.Data
 {
 	using BlockProperties = List<List<BlockProperty>>;
 	

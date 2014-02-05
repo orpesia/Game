@@ -7,22 +7,67 @@
 //     이러한 변경 내용이 손실됩니다.
 // </auto-generated>
 //------------------------------------------------------------------------------
-using System;
+using System.Collections.Generic;
 
 using UnityEngine;
-using UnnamedResource;
 
+using Unnamed;
 using Game;
 
-namespace GameData
+namespace Game.Data
 {
 	public class BlockDataSet : MonoBehaviour
 	{
-		public TextureAtlas Atlas { get; set; }
-//		public BlockTy
+		[System.Serializable]
+		public class KeyValue
+		{
+			public BlockCode code;
+			public string name;
+			
+			public KeyValue(BlockCode code, string name)
+			{
+				this.code = code;
+				this.name = name;
+			}
+		};
 
+		[SerializeField][HideInInspector]
+		public TextureAtlas Atlas = null;
+
+		[SerializeField]
+		public List<KeyValue> Data = new List<KeyValue>();
+
+		public Dictionary<BlockCode,string> Tree = new Dictionary<BlockCode, string>();
+
+		
 		public BlockDataSet ()
 		{
+		}
+		
+		void Awake()
+		{
+			this.SearchMode();
+		}
+
+
+		public void SearchMode()
+		{
+			foreach(KeyValue v in Data)
+			{
+				Tree.Add(v.code, v.name);
+			}
+			
+			Data.Clear ();
+		}
+		
+		public void DataMode()
+		{
+			foreach(KeyValuePair<BlockCode,string> v in Tree)
+			{
+				Data.Add(new KeyValue(v.Key,v.Value));
+			}
+			
+			Tree.Clear ();
 		}
 
 

@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400000}
+  - 114: {fileID: 11400000}
+  m_Layer: 0
+  m_Name: SampleAtlas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &400000
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b8cc63d632d1945b1b8aca635f4628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TargetTexture: {fileID: 2800000, guid: c68fdbf55c3b1e449a6c88c53e6b62cd, type: 3}
+  Textures:
+  - name: block_yellow
+    path: Assets/Texture/Board/Block/Sample/block_yellow.png
+    UV:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: .22265625
+      height: .4140625
+  - name: block_violet
+    path: Assets/Texture/Board/Block/Sample/block_violet.png
+    UV:
+      serializedVersion: 2
+      x: 0
+      y: .4453125
+      width: .22265625
+      height: .4140625
+  - name: block_blue
+    path: Assets/Texture/Board/Block/Sample/block_blue.png
+    UV:
+      serializedVersion: 2
+      x: .23828125
+      y: 0
+      width: .22265625
+      height: .4140625
+  - name: block_green
+    path: Assets/Texture/Board/Block/Sample/block_green.png
+    UV:
+      serializedVersion: 2
+      x: .23828125
+      y: .4453125
+      width: .22265625
+      height: .4140625
+  - name: block_red
+    path: Assets/Texture/Board/Block/Sample/block_red.png
+    UV:
+      serializedVersion: 2
+      x: .4765625
+      y: 0
+      width: .22265625
+      height: .4140625
+  - name: block_blank
+    path: Assets/Texture/Board/Block/Sample/block_blank.png
+    UV:
+      serializedVersion: 2
+      x: .4765625
+      y: .4453125
+      width: .22265625
+      height: .4140625
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 100000}
+  m_IsPrefabParent: 1
+  m_IsExploded: 1

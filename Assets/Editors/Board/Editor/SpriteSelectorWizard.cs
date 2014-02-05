@@ -13,7 +13,7 @@ using UnityEditor;
 
 using System.Collections.Generic;
 
-using UnnamedResource;
+using Unnamed;
 
 namespace BoardEditor
 {

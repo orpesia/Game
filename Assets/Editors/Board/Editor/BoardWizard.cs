@@ -1,11 +1,9 @@
-﻿using System;
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
-using UnnamedUtility;
-using UnnamedResource;
+using Unnamed;
 using Game;
+using Game.Data;
 using System.Collections.Generic;
 
 
@@ -17,8 +15,19 @@ namespace BoardEditor
 		[MenuItem("Assets/" + Named.Title + "/Board Editor")]
 		static void WizardCreate()
 		{
+			Setting setting = new Setting();
+			setting.Load ();
+			if( null == setting.DefaultBlockSet )
+			{
+				EditorUtility.DisplayDialog("", "기본 블럭을 먼저 지정해야 합니다.", "확인" );
+
+				SettingWizard.ShowWizard();
+
+				return ;
+			}
+
 			GameObject targetObject = UnityEditor.Selection.activeObject as GameObject;
-			if( null == targetObject || null == targetObject.GetComponent<GameData.BoardData>() )
+			if( null == targetObject || null == targetObject.GetComponent<Game.Data.BoardData>() )
 			{
 				ShowWizard(null, Path.GetSelectionPath());
 			}
@@ -30,7 +39,7 @@ namespace BoardEditor
 
 		private Rect RECT_ONE = new Rect( 0, 0, 1, 1 );
 
-		private static int MENU_COUNT = 3;
+		private static int MENU_COUNT = 2;
 		private const float MenuWidth = 230.0f;
 		private const float InnerWidth = 190.0f;
 		private const float InnerHeight = 24.0f;
@@ -39,7 +48,7 @@ namespace BoardEditor
 		private GameObject m_boardPrefab = null;
 		private string m_boardName = "Unnamed";
 		private string m_savePath = "";
-		private UnnamedObject.HexagonVertex m_vertex = new UnnamedObject.HexagonVertex(BoardShape.Width, BoardShape.Height);
+		private HexagonVertex m_vertex = new HexagonVertex(BoardShape.Width, BoardShape.Height);
 
 		//block
 		private Texture2D m_blankTexture;
@@ -52,11 +61,11 @@ namespace BoardEditor
 		private Texture2D m_durableTexture;
 
 		private Vector2 m_scrollbar;
-		private GameData.BoardData m_boardData;
+		private Game.Data.BoardData m_boardData;
 		private int m_selected = (int)Game.GenerateType.RandomSubA;
 
 		//Property
-		private GameData.BlockProperty m_selectProperty = null;
+		private Game.Data.BlockProperty m_selectProperty = null;
 		private Vector2 m_selectPropertyPosition = Vector2.zero;
 
 		public static void ShowWizard( GameObject prefab, string path )
@@ -68,7 +77,7 @@ namespace BoardEditor
 
 			if( null != prefab )
 			{
-				boardWizard.m_boardData = boardWizard.m_boardPrefab.GetComponent<GameData.BoardData>();
+				boardWizard.m_boardData = boardWizard.m_boardPrefab.GetComponent<Game.Data.BoardData>();
 				boardWizard.m_boardName = boardWizard.m_boardData.name;
 			}
 		}
@@ -114,8 +123,8 @@ namespace BoardEditor
 		void OnGUI()
 		{
 			this.DrawBoard();
-			GUI.WindowFunction[] functions 	= new GUI.WindowFunction[]{ BoardWindow, BlockWindow, PropertyWindow };
-			string[] funcNames 				= { "Board", "Block", "Property" };
+			GUI.WindowFunction[] functions 	= new GUI.WindowFunction[]{ BoardWindow, BlockWindow };
+			string[] funcNames 				= { "Board", "Block" };
 			
 			GUIStyle style = GUI.skin.GetStyle("Window");
 			GUIStyleState backgupState = style.onNormal;
@@ -226,7 +235,7 @@ namespace BoardEditor
 				if( true == isContinue )
 				{ 
 					GameObject boardObject = new GameObject(m_boardName);
-					GameData.BoardData boardData = boardObject.AddComponent<GameData.BoardData>();
+					Game.Data.BoardData boardData = boardObject.AddComponent<Game.Data.BoardData>();
 					boardData.name = m_boardName;
 
 					UnityEngine.Object prefabObject = PrefabUtility.CreateEmptyPrefab(prefabPath);
@@ -238,7 +247,7 @@ namespace BoardEditor
 					GameObject.DestroyImmediate(boardObject);
 
 					m_boardPrefab = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject)) as GameObject;
-					m_boardData = m_boardPrefab.GetComponent<GameData.BoardData>();
+					m_boardData = m_boardPrefab.GetComponent<Game.Data.BoardData>();
 
 					m_selectProperty = null;
 
@@ -307,12 +316,14 @@ namespace BoardEditor
 					EditorUtility.DisplayDialog("", "생성된 보드가 없습니다.", "확인" );
 				}
 
+			}
 
-				if( null == m_selectProperty )
-				{
-					EditorGUILayout.LabelField("블럭을 선택해 주세요." );
-					return ;
-				}
+			if( null == m_selectProperty )
+			{
+				EditorGUILayout.Separator();
+				EditorGUILayout.Separator();
+				EditorGUILayout.LabelField("블럭을 선택해 주세요." );
+				return ;
 			}
 
 			EditorGUILayout.Separator();
@@ -356,49 +367,59 @@ namespace BoardEditor
 
 		public void BlockWindow( int id )
 		{
-			if( GUILayout.Button ("이미지 지정", GUILayout.Height (InnerHeight) ))
+			Rect position = new Rect( 5, 15, 50, 50 );
+
+			if(GUI.Button (position, new GUIContent(m_blankTexture)))
 			{
-				bool isContinue = true;
-				if( null != m_boardData.Atlas )
-				{
-					isContinue = EditorUtility.DisplayDialog("", "기존 찍어놨던 이미지가 없어집니다. 계속하시겠습니까?", "확인", "취소" );
-				}
-
-				if( false == isContinue )
-				{
-					return ;
-				}
-
-				AtlasSelectorWizard.ShowWizard
-				( 
-                 	(GameObject select ) => 
-          			{ 
-						m_boardData.SetAtlas(select);
-
-						for( int x = 0; x < m_boardData.BlockProperties.Count; ++x )
-						{
-							for( int y = 0; y < m_boardData.BlockProperties[x].Count; ++y )
-							{
-								m_boardData.BlockProperties[x,y].Generate = Game.GenerateType.RandomCustomA;
-							}
-						}
-
-
-						m_boardData.BlockAtlas.Clear ();
-
-						EditorUtility.SetDirty (m_boardData);
-						
-						Repaint ();
-					}
-				);
 			}
-
+//			if( GUILayout.Button ("Select block set", GUILayout.Height (InnerHeight) ))
+//			{
+//				System.Action<Object> SelectCallback = (Object set) =>
+//				{
+//
+//				};
+//
+//				System.Func<Object, Texture2D> ViewCallback = (Object set) =>
+//				{
+//					return null;
+//				};
+//
+//				ObjectSelectorWizard.ShowWizard<BlockDataSet>("Block selector", SelectCallback, ViewCallback, 2.0f);
+////				if( false == isContinue )
+////				{
+////					return ;
+////				}
+////
+////				AtlasSelectorWizard.ShowWizard
+////				( 
+////                 	(GameObject select ) => 
+////          			{ 
+////						m_boardData.SetAtlas(select);
+////
+////						for( int x = 0; x < m_boardData.BlockProperties.Count; ++x )
+////						{
+////							for( int y = 0; y < m_boardData.BlockProperties[x].Count; ++y )
+////							{
+////								m_boardData.BlockProperties[x,y].Generate = Game.GenerateType.RandomCustomA;
+////							}
+////						}
+////
+////
+////						m_boardData.BlockAtlas.Clear ();
+////
+////						EditorUtility.SetDirty (m_boardData);
+////						
+////						Repaint ();
+////					}
+////				);
+//			}
+//
 			if( null == m_boardData )
 			{
 				return ;
 			}
 
-			EditorGUILayout.ObjectField(m_boardData.Atlas, typeof(TextureAtlas), false);
+//			EditorGUILayout.ObjectField(m_boardData.Atlas, typeof(TextureAtlas), false);
 			
 //			if( GUILayout.Button ("추가", GUILayout.Height(InnerHeight)) )
 //			{
@@ -417,67 +438,72 @@ namespace BoardEditor
 //
 //			}
 
-			m_scrollbar = EditorGUILayout.BeginScrollView(m_scrollbar, GUILayout.Height (480));
-
-
-			Func<int, string, Texture2D, Rect, bool> DrawBlock = (int offset, string name, Texture2D texture, Rect uv)=>
-			{
-				bool pushed = false;
-				int height = 7 + ( offset * 67 );
-				if( GUILayout.Button ("", GUILayout.Width (64), GUILayout.Height ( 64 )))
-				{
-					pushed = true;
-				}
-				
-				GUI.DrawTextureWithTexCoords(new Rect(8, height, 56, 56 ), texture, uv );
-				GUI.Label(new Rect(74, height + 20, 100, 56 ), name );
-
-				return pushed;
-			};
-
-			int additionCount = 0;
-
-			if( DrawBlock(additionCount++, "공백", m_blankTexture, RECT_ONE ) )
-			{
-				m_selected = (int)Game.GenerateType.Blank;
-			}
-
-			if( DrawBlock(additionCount++, "무작위", m_randomTexture, RECT_ONE ) )
-			{
-				m_selected = (int)Game.GenerateType.RandomSubA;
-			}
-
-			for( int i = 0; i < m_boardData.BlockAtlas.Count; ++i )
-			{
-				TextureAtlas.Atlas atlas = m_boardData.GetAtlas (i);
-				
-				if( DrawBlock(additionCount + i, atlas.name, m_boardData.Atlas.TargetTexture, atlas.UV ) )
-				{
-					m_selected = i;
-				}
-			}
-
-			EditorGUILayout.EndScrollView();
-
-			Multiple data = this.GetDataByGenerate(m_selected);
-			string selectName = data.First<string>();
-			Texture2D selectTex = data.Next<Texture2D>();
-			Rect selectUV = data.Next<Rect>();
-
-			GUI.Label(new Rect(85, 650, 100, 56 ), selectName );
-			GUI.DrawTextureWithTexCoords(new Rect(10, 622, 64, 64 ), selectTex, selectUV );
-
-		}
-
-		public void PropertyWindow( int id )
-		{
-
+//			m_scrollbar = EditorGUILayout.BeginScrollView(m_scrollbar, GUILayout.Height (480));
+//
+//
+//			Func<int, string, Texture2D, Rect, bool> DrawBlock = (int offset, string name, Texture2D texture, Rect uv)=>
+//			{
+//				bool pushed = false;
+//				int height = 7 + ( offset * 67 );
+//				if( GUILayout.Button ("", GUILayout.Width (64), GUILayout.Height ( 64 )))
+//				{
+//					pushed = true;
+//				}
+//				
+//				GUI.DrawTextureWithTexCoords(new Rect(8, height, 56, 56 ), texture, uv );
+//				GUI.Label(new Rect(74, height + 20, 100, 56 ), name );
+//
+//				return pushed;
+//			};
+//
+//			int additionCount = 0;
+//
+//			if( DrawBlock(additionCount++, "공백", m_blankTexture, RECT_ONE ) )
+//			{
+//				m_selected = (int)Game.GenerateType.Blank;
+//			}
+//
+//			if( DrawBlock(additionCount++, "무작위", m_randomTexture, RECT_ONE ) )
+//			{
+//				m_selected = (int)Game.GenerateType.RandomSubA;
+//			}
+//
+//			for( int i = 0; i < m_boardData.BlockAtlas.Count; ++i )
+//			{
+//				TextureAtlas.Atlas atlas = m_boardData.GetAtlas (i);
+//				
+//				if( DrawBlock(additionCount + i, atlas.name, m_boardData.Atlas.TargetTexture, atlas.UV ) )
+//				{
+//					m_selected = i;
+//				}
+//			}
+//
+//			EditorGUILayout.EndScrollView();
+//
+//			Multiple data = this.GetDataByGenerate(m_selected);
+//			string selectName = data.First<string>();
+//			Texture2D selectTex = data.Next<Texture2D>();
+//			Rect selectUV = data.Next<Rect>();
+//
+//			GUI.Label(new Rect(85, 650, 100, 56 ), selectName );
+//			GUI.DrawTextureWithTexCoords(new Rect(10, 622, 64, 64 ), selectTex, selectUV );
 
 		}
+
+//		public void PropertyWindow( int id )
+//		{
+//
+//
+//		}
 
 		private Multiple GetDataByGenerate(int genType )
 		{
 			Multiple m = new Multiple(3);
+			m.Set(0, "무작위" );
+			m.Set(1, m_randomTexture );
+			m.Set(2, RECT_ONE );
+
+			return m;
 
 			if( genType == (int)Game.GenerateType.RandomSubA)
 			{
@@ -495,19 +521,19 @@ namespace BoardEditor
 			}
 			else
 			{
-				if( m_boardData.BlockAtlas.Count <= genType )
-				{
-					m.Set(0, "없음" );
-					m.Set(1, EditorGUIUtility.whiteTexture );
-					m.Set(2, RECT_ONE );
-				}
-				else
-				{
-					TextureAtlas.Atlas atlas = m_boardData.GetAtlas(genType);
-					m.Set(0, atlas.name );
-					m.Set(1, m_boardData.Atlas.TargetTexture );
-					m.Set(2, atlas.UV );
-				}
+//				if( m_boardData.BlockAtlas.Count <= genType )
+//				{
+//					m.Set(0, "없음" );
+//					m.Set(1, EditorGUIUtility.whiteTexture );
+//					m.Set(2, RECT_ONE );
+//				}
+//				else
+//				{
+//					TextureAtlas.Atlas atlas = m_boardData.GetAtlas(genType);
+//					m.Set(0, atlas.name );
+//					m.Set(1, m_boardData.Atlas.TargetTexture );
+//					m.Set(2, atlas.UV );
+//				}
 			}
 
 			return m;
@@ -523,7 +549,7 @@ namespace BoardEditor
 			return null;
 		}
 
-		private void LoadDefaultSettings( GameData.BoardData boardData )
+		private void LoadDefaultSettings( Game.Data.BoardData boardData )
 		{
 			Setting setting = new Setting();
 			setting.Load();
@@ -531,8 +557,8 @@ namespace BoardEditor
 			boardData.BoardSize.x = setting.DefaultWidth;
 			boardData.BoardSize.y = setting.DefaultHeight;
 			boardData.Pixel = setting.DefaultPixel;
-			boardData.Atlas = ( null == setting.DefaultAtlas ) ? null : setting.DefaultAtlas.GetComponent<TextureAtlas>();
-			boardData.BlockAtlas.AddRange(setting.DefaultAtlasElems);
+//			boardData.Atlas = ( null == setting.DefaultAtlas ) ? null : setting.DefaultAtlas.GetComponent<TextureAtlas>();
+//			boardData.BlockAtlas.AddRange(setting.DefaultAtlasElems);
 
 		}
 

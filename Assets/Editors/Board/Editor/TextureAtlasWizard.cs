@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEditor;
-using UnnamedResource;
+using Unnamed;
 
 namespace BoardEditor
 {
@@ -44,11 +44,11 @@ namespace BoardEditor
 			GameObject targetObject = UnityEditor.Selection.activeObject as GameObject;
 			if( null == targetObject || null == targetObject.GetComponent<TextureAtlas>() )
 			{
-				ShowWizard(null, UnnamedUtility.Path.GetSelectionPath());
+				ShowWizard(null, Path.GetSelectionPath());
 			}
 			else
 			{
-				ShowWizard(targetObject, UnnamedUtility.Path.GetSelectionPath());
+				ShowWizard(targetObject, Path.GetSelectionPath());
 			}
 		}
 

@@ -3,14 +3,11 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using UnnamedUtility;
-using UnnamedResource;
-
 using GameView;
 
 namespace BoardEditor
 {
-    class BoardToolManager : MonoBehaviour
+    public class BoardToolManager : MonoBehaviour
     {
 #if UNITY_EDITOR
 		public Color PanelSizeColor = Color.blue;
@@ -68,112 +65,112 @@ namespace BoardEditor
 
 		public void BoardWindow( int id )
 		{
-			Rect rect = new Rect( MenuWidth.Center (MenuItemWidth ), MenuHeight, MenuItemWidth, MenuHeight );
-			if(GUI.Button ( rect, "New Board" ))
-			{
-				m_process.NewBoard();
-				this.Binding(m_process.HexagonRenderer);
-			}
-
-			rect.y += MenuHeight + MenuTint;
-
-			m_hexWidth = this.LabelNText(ref rect, "Hex Width", m_hexWidth);
-			rect.y += MenuHeight + MenuTint;
-			
-			m_hexHeight = this.LabelNText(ref rect, "Hex Height", m_hexHeight);
-			rect.y += MenuHeight + MenuTint;
-
-			m_hexAttachX = this.LabelNText(ref rect, "Hex AttachX", m_hexAttachX);
-			rect.y += MenuHeight + MenuTint;
-
-			m_hexAttachY = this.LabelNText(ref rect, "Hex AttachY", m_hexAttachY);
-			rect.y += MenuHeight + MenuTint;
-
-			m_pixel = this.LabelNText(ref rect, "Pixel", m_pixel);
-			rect.y += MenuHeight + MenuTint;
-
-			if(GUI.Button ( rect, "Recreate Vertex" ))
-			{
-				this.UnBinding(m_process.HexagonRenderer);
-			}
+//			Rect rect = new Rect( MenuWidth.Center (MenuItemWidth ), MenuHeight, MenuItemWidth, MenuHeight );
+//			if(GUI.Button ( rect, "New Board" ))
+//			{
+//				m_process.NewBoard();
+//				this.Binding(m_process.HexagonRenderer);
+//			}
+//
+//			rect.y += MenuHeight + MenuTint;
+//
+//			m_hexWidth = this.LabelNText(ref rect, "Hex Width", m_hexWidth);
+//			rect.y += MenuHeight + MenuTint;
+//			
+//			m_hexHeight = this.LabelNText(ref rect, "Hex Height", m_hexHeight);
+//			rect.y += MenuHeight + MenuTint;
+//
+//			m_hexAttachX = this.LabelNText(ref rect, "Hex AttachX", m_hexAttachX);
+//			rect.y += MenuHeight + MenuTint;
+//
+//			m_hexAttachY = this.LabelNText(ref rect, "Hex AttachY", m_hexAttachY);
+//			rect.y += MenuHeight + MenuTint;
+//
+//			m_pixel = this.LabelNText(ref rect, "Pixel", m_pixel);
+//			rect.y += MenuHeight + MenuTint;
+//
+//			if(GUI.Button ( rect, "Recreate Vertex" ))
+//			{
+//				this.UnBinding(m_process.HexagonRenderer);
+//			}
 
 		}
 
 		public void TextureWindow( int id )
 		{
 #if UNITY_EDITOR
-			Rect rect = new Rect( MenuWidth.Center (MenuItemWidth ), MenuHeight, MenuItemWidth, MenuHeight );
-			 
-			if(GUI.Button ( rect, "New Atlas"))
-			{
-				string folderPath = UnityEditor.EditorUtility.OpenFolderPanel("Collect Texture", Application.dataPath, "*.png");
-				if( string.IsNullOrEmpty(folderPath))
-				{ 
-					return ;
-				}
-
-				string savePath = UnityEditor.EditorUtility.SaveFilePanel("Save Texture", folderPath, "", "png");
-				if( string.IsNullOrEmpty(savePath))
-				{
-					return ;
-				} 
-
-				List<Texture2D> pathList = new List<Texture2D>();
-
-				string[] inFiles = System.IO.Directory.GetFiles (folderPath);
-				for( int i = 0; i < inFiles.Length; ++i )
-				{
-					string extension = System.IO.Path.GetExtension(inFiles[i]);
-					if( extension == ".PNG" || extension == ".png" )
-					{
-						WWW www = new WWW("file://"+inFiles[i]);
-						Texture2D wwwTex = www.texture as Texture2D; 
-						wwwTex.name = System.IO.Path.GetFileName(inFiles[i]);
-						pathList.Add (wwwTex);
-					} 
-				}
-
-				string saveName = System.IO.Path.GetFileNameWithoutExtension(savePath);
-				GameObject atlasObject = new GameObject(saveName);
-				atlasObject.transform.parent = transform;
-
-				TextureAtlas atlas = atlasObject.AddComponent<TextureAtlas>();
-				TextureAtlasGenerator.Create (savePath, pathList.ToArray(), atlas);
-
-				string prefabPath = System.IO.Path.ChangeExtension(savePath,".prefab"); 
-				prefabPath = this.SplitAssetPath(prefabPath);
-
-				UnityEngine.Object prefabObject = UnityEditor.PrefabUtility.CreateEmptyPrefab( this.SplitAssetPath(prefabPath));
-				UnityEditor.PrefabUtility.ReplacePrefab(atlasObject, prefabObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
-//				GameObject prefabObject = UnityEditor.PrefabUtility.CreatePrefab(prefabPath, atlasObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
-
-
-//				UnityEditor.AssetDatabase.AddObjectToAsset(atlasObject,prefabPath);
-//				UnityEditor.AssetDatabase.ImportAsset(prefabPath, UnityEditor.ImportAssetOptions.ForceUpdate);
-//				GameObject prefabObject = UnityEditor.AssetDatabase.GetAssetPath(prefabPath) as GameObject;
-				UnityEditor.EditorUtility.SetDirty(prefabObject);
-
-
-				UnityEditor.AssetDatabase.SaveAssets();
-				UnityEditor.AssetDatabase.Refresh(UnityEditor.ImportAssetOptions.ForceUpdate);
-
-//				GameObject.Destroy(atlasObject);
+//			Rect rect = new Rect( MenuWidth.Center (MenuItemWidth ), MenuHeight, MenuItemWidth, MenuHeight );
+//			 
+//			if(GUI.Button ( rect, "New Atlas"))
+//			{
+//				string folderPath = UnityEditor.EditorUtility.OpenFolderPanel("Collect Texture", Application.dataPath, "*.png");
+//				if( string.IsNullOrEmpty(folderPath))
+//				{ 
+//					return ;
+//				}
+//
+//				string savePath = UnityEditor.EditorUtility.SaveFilePanel("Save Texture", folderPath, "", "png");
+//				if( string.IsNullOrEmpty(savePath))
+//				{
+//					return ;
+//				} 
+//
+//				List<Texture2D> pathList = new List<Texture2D>();
+//
+//				string[] inFiles = System.IO.Directory.GetFiles (folderPath);
+//				for( int i = 0; i < inFiles.Length; ++i )
+//				{
+//					string extension = System.IO.Path.GetExtension(inFiles[i]);
+//					if( extension == ".PNG" || extension == ".png" )
+//					{
+//						WWW www = new WWW("file://"+inFiles[i]);
+//						Texture2D wwwTex = www.texture as Texture2D; 
+//						wwwTex.name = System.IO.Path.GetFileName(inFiles[i]);
+//						pathList.Add (wwwTex);
+//					} 
+//				}
+//
+//				string saveName = System.IO.Path.GetFileNameWithoutExtension(savePath);
+//				GameObject atlasObject = new GameObject(saveName);
+//				atlasObject.transform.parent = transform;
+//
+//				TextureAtlas atlas = atlasObject.AddComponent<TextureAtlas>();
+//				TextureAtlasGenerator.Create (savePath, pathList.ToArray(), atlas);
+//
+//				string prefabPath = System.IO.Path.ChangeExtension(savePath,".prefab"); 
+//				prefabPath = this.SplitAssetPath(prefabPath);
+//
+//				UnityEngine.Object prefabObject = UnityEditor.PrefabUtility.CreateEmptyPrefab( this.SplitAssetPath(prefabPath));
+//				UnityEditor.PrefabUtility.ReplacePrefab(atlasObject, prefabObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
+////				GameObject prefabObject = UnityEditor.PrefabUtility.CreatePrefab(prefabPath, atlasObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
+//
+//
+////				UnityEditor.AssetDatabase.AddObjectToAsset(atlasObject,prefabPath);
+////				UnityEditor.AssetDatabase.ImportAsset(prefabPath, UnityEditor.ImportAssetOptions.ForceUpdate);
+////				GameObject prefabObject = UnityEditor.AssetDatabase.GetAssetPath(prefabPath) as GameObject;
+//				UnityEditor.EditorUtility.SetDirty(prefabObject);
+//
+//
+//				UnityEditor.AssetDatabase.SaveAssets();
+//				UnityEditor.AssetDatabase.Refresh(UnityEditor.ImportAssetOptions.ForceUpdate);
+//
+////				GameObject.Destroy(atlasObject);
+//				
 				
-				
-			}
-			
-			rect.y += MenuHeight + MenuTint;
-			if(GUI.Button ( rect, "Save Atlas"))
-			{
-
-			}
-			
-			rect.y += MenuHeight + MenuTint;
-			if(GUI.Button ( rect, "Load Atlas"))
-			{
-			}
-
-			rect.y += MenuHeight + MenuTint;
+//			}
+//			
+//			rect.y += MenuHeight + MenuTint;
+//			if(GUI.Button ( rect, "Save Atlas"))
+//			{
+//
+//			}
+//			
+//			rect.y += MenuHeight + MenuTint;
+//			if(GUI.Button ( rect, "Load Atlas"))
+//			{
+//			}
+//
+//			rect.y += MenuHeight + MenuTint;
 #endif		
 		}
 

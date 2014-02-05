@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace UnnamedUtility
+namespace Unnamed
 {
 
 	public class Multiple

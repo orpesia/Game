@@ -55,27 +55,33 @@ namespace Game
 		TypeE,
 	}
 
+	public static class BlockConst
+	{
+		public const int Bit = 4;
+		public const int SubCount = 3;
+	};
+
 	public enum BlockCode //--> SettingType.Fixed
 	{
-		Blank = ((int)BlockType.Blank) << 4,
+		Blank = ((int)BlockType.Blank) << BlockConst.Bit,
 
-		TypeA_A = ((int)BlockType.TypeA) << 4,
+		TypeA_A = ((int)BlockType.TypeA) << BlockConst.Bit,
 		TypeA_B,
 		TypeA_C,
 		
-		TypeB_A = ((int)BlockType.TypeB) << 4,
+		TypeB_A = ((int)BlockType.TypeB) << BlockConst.Bit,
 		TypeB_B,
 		TypeB_C,
 		
-		TypeC_A = ((int)BlockType.TypeC) << 4,
+		TypeC_A = ((int)BlockType.TypeC) << BlockConst.Bit,
 		TypeC_B,
 		TypeC_C,
 
-		TypeD_A = ((int)BlockType.TypeD) << 4,
+		TypeD_A = ((int)BlockType.TypeD) << BlockConst.Bit,
 		TypeD_B,
 		TypeD_C,
 
-		TypeE_A = ((int)BlockType.TypeE) << 4,
+		TypeE_A = ((int)BlockType.TypeE) << BlockConst.Bit,
 		TypeE_B,
 		TypeE_C,
 	}
@@ -88,11 +94,16 @@ namespace Game
 	}
 
 
-	static class EnumTypeSupporter
+	public static class BlockEnumSupporter
 	{
 		public static int ToBlockType( this BlockCode type)
 		{
-			return ((int)type) >> 4;
+			return ((int)type) >> BlockConst.Bit;
+		}
+
+		public static BlockCode ToBlockCode( this BlockType type, int codeIndex )
+		{
+			return (BlockCode)((int)type << BlockConst.Bit) + codeIndex;
 		}
 
 	};

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using GameData;
+using Game.Data;
 
 namespace BoardEditor
 {

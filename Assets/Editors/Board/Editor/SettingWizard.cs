@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-using UnnamedResource;
+using Unnamed;
+using Game;
+using Game.Data;
 
 namespace BoardEditor
 {
@@ -25,87 +27,60 @@ namespace BoardEditor
 		public static void ShowWizard()
 		{
 			SettingWizard wizard = ScriptableWizard.DisplayWizard<SettingWizard>("Setting");
-			wizard.minSize = wizard.maxSize = new UnityEngine.Vector2( 256, 512 );
+			wizard.minSize = wizard.maxSize = new UnityEngine.Vector2( 250, 512 );
 			wizard.m_setting.Load();
 		}
 
 		void OnGUI()
 		{
 			EditorGUILayout.LabelField("설정");
-			 
 
 			m_setting.DefaultWidth = EditorGUILayout.IntField ( "세로", m_setting.DefaultWidth );
 			m_setting.DefaultHeight = EditorGUILayout.IntField ( "세로", m_setting.DefaultHeight );
 			m_setting.DefaultPixel = EditorGUILayout.IntField ( "픽셀", m_setting.DefaultPixel );
 
-			string atlasButtonName = m_setting.DefaultAtlas == null ? "선택" : m_setting.DefaultAtlas.name;
+			EditorGUILayout.Separator();
+			EditorGUILayout.LabelField("기본 블럭");
+			EditorGUILayout.Separator();
 
-			if( GUILayout.Button (atlasButtonName))
+			bool isPress = false;
+			if( null == m_setting.DefaultBlockSet )
 			{
-				System.Action<GameObject> action = (GameObject atlas)=>
-				{ 
-					if( atlas == m_setting.DefaultAtlas )
-					{
-						return ;
-					}
-
-					if( null != atlas )
-					{
-						m_setting.DefaultAtlas = atlas; 
-						m_setting.DefaultAtlasPath = AssetDatabase.GetAssetPath(m_setting.DefaultAtlas);
-
-						m_setting.DefaultAtlasElems.Clear ();
-						Repaint ();
-					}
-				};
-
-				AtlasSelectorWizard.ShowWizard(action);
+				isPress = GUILayout.Button ("선택", GUILayout.Width (250), GUILayout.Height(250));
+			}
+			else
+			{
+				BlockDataSet dataSet = m_setting.DefaultBlockSet.GetComponent<BlockDataSet>();
+				isPress = GUILayout.Button ( new GUIContent(dataSet.Atlas.TargetTexture), GUILayout.Width (200), GUILayout.Height(200));
 			}
 
-			GUI.enabled = null == m_setting.DefaultAtlas ? false : true;
-
-			if( GUILayout.Button ("추가"))
+			if( isPress )
 			{
-				System.Action<TextureAtlas.Atlas> action = (TextureAtlas.Atlas atlas)=>
+				System.Action<Object> SelectCallback = (Object obj) =>
 				{
-					m_setting.DefaultAtlasElems.Add (atlas.name);
+					BlockDataSet target = obj as BlockDataSet;
+					m_setting.DefaultBlockSet 		= target.gameObject;
+					m_setting.DefaultBlockSetPath 	= AssetDatabase.GetAssetPath(target);
+
 					Repaint ();
 				};
-
-				SpriteSelectorWizard.ShowWizard(m_setting.DefaultAtlas.GetComponent<TextureAtlas>(), action );
-			}
-
-			GUI.enabled = true;
-
-
-			ScrollView = EditorGUILayout.BeginScrollView(ScrollView, GUILayout.Height (150));
-			for( int i = 0; i < m_setting.DefaultAtlasElems.Count; ++i )
-			{
-				EditorGUILayout.BeginHorizontal();
-				if( GUILayout.Button ("Remove", GUILayout.Width (80)))
-				{
-					m_setting.DefaultAtlasElems.Remove (m_setting.DefaultAtlasElems[i]);
-
-					Repaint();
-
-					return ;
-				}
-
-				EditorGUILayout.LabelField (m_setting.DefaultAtlasElems[i], GUILayout.Width (150));
-
-				EditorGUILayout.EndHorizontal();
 				
+				System.Func<Object, Texture2D> ViewCallback = (Object obj) =>
+				{
+					BlockDataSet target = obj as BlockDataSet;
+					return target.Atlas.TargetTexture;
+				};
+				
+				ObjectSelectorWizard.ShowWizard<BlockDataSet>("Block selector", SelectCallback, ViewCallback, 1.5f );
 			}
 
-			EditorGUILayout.EndScrollView();
-
 			EditorGUILayout.Separator();
 			EditorGUILayout.Separator();
 			EditorGUILayout.Separator();
 			EditorGUILayout.Separator();
 			EditorGUILayout.Separator();
 
-			if( GUILayout.Button ("확인") )
+			if( GUILayout.Button ("저장") )
 			{
 				m_setting.Save();
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 using System.Collections.Generic;
 
-namespace UnnamedResource{
+namespace Unnamed{
 
 	public class TextureAtlas : MonoBehaviour
 	{

@@ -10,7 +10,7 @@
 using System;
 using System.Diagnostics;
 
-namespace UnnamedUtility
+namespace Unnamed
 {
 	public class DBGUtils
 	{

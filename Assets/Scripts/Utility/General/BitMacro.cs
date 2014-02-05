@@ -1,5 +1,5 @@
 
-namespace UnnamedUtility
+namespace Unnamed
 {
 
 public class BitMacro

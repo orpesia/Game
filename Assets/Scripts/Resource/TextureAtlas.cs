@@ -10,8 +10,8 @@ namespace Unnamed{
 		[Serializable]
 		public class Atlas
 		{
-			public string name;
-			public string path;
+			public string name = "";
+			public string path = "";
 			public Rect UV; 
 		};
 
@@ -49,7 +49,7 @@ namespace Unnamed{
 			Textures.Add (atlas);
 		}
 
-		public Atlas GetAtlasByName(string name)
+		public Atlas GetSpriteByName(string name)
 		{
 			foreach(Atlas atlas in Textures )
 			{

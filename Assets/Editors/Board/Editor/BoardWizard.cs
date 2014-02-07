@@ -6,7 +6,6 @@ using Game;
 using Game.Data;
 using System.Collections.Generic;
 
-
 namespace BoardEditor
 {
 
@@ -17,6 +16,7 @@ namespace BoardEditor
 		{
 			Setting setting = new Setting();
 			setting.Load ();
+
 			if( null == setting.DefaultBlockSet )
 			{
 				EditorUtility.DisplayDialog("", "기본 블럭을 먼저 지정해야 합니다.", "확인" );
@@ -26,22 +26,25 @@ namespace BoardEditor
 				return ;
 			}
 
+			BlockDataSet dataset = setting.DefaultBlockSet.GetComponent<BlockDataSet>();
+
 			GameObject targetObject = UnityEditor.Selection.activeObject as GameObject;
 			if( null == targetObject || null == targetObject.GetComponent<Game.Data.BoardData>() )
 			{
-				ShowWizard(null, Path.GetSelectionPath());
+				ShowWizard(null, Path.GetSelectionPath(), dataset);
 			}
 			else
 			{
-				ShowWizard(targetObject, Path.GetSelectionPath());
+				ShowWizard(targetObject, Path.GetSelectionPath(), dataset);
 			}
 		}
 
-		private Rect RECT_ONE = new Rect( 0, 0, 1, 1 );
+		const bool TOOL_DEV = true;
 
-		private static int MENU_COUNT = 2;
+		private System.Action[] m_boardItems;
+
 		private const float MenuWidth = 230.0f;
-		private const float InnerWidth = 190.0f;
+		private const float InnerWidth = 220.0f;
 		private const float InnerHeight = 24.0f;
 
 		//board
@@ -51,104 +54,103 @@ namespace BoardEditor
 		private HexagonVertex m_vertex = new HexagonVertex(BoardShape.Width, BoardShape.Height);
 
 		//block
-		private Texture2D m_blankTexture;
-		private Texture2D m_randomTexture;
-
 		private Texture2D m_itemATexture;
 		private Texture2D m_itemSTexture;
 
 		private Texture2D m_selectPropertyTexture;
 		private Texture2D m_durableTexture;
 
-		private Vector2 m_scrollbar;
-		private Game.Data.BoardData m_boardData;
-		private int m_selected = (int)Game.GenerateType.RandomSubA;
+		private Vector2 m_blockScrollBar;
+		private BoardData m_boardData;
+		private BlockDataSet m_blockDataSet;
+		private BlockRenderer m_blockRenderer = new BlockRenderer();
+
+		private GenerateType m_selectGenerate = GenerateType.RandomSubA;
 
 		//Property
 		private Game.Data.BlockProperty m_selectProperty = null;
 		private Vector2 m_selectPropertyPosition = Vector2.zero;
 
-		public static void ShowWizard( GameObject prefab, string path )
+		//Random
+		private Vector2 m_randomScrollBar;
+
+		public static void ShowWizard( GameObject prefab, string path, BlockDataSet dataSet )
 		{
 			BoardWizard boardWizard = ScriptableWizard.DisplayWizard<BoardWizard>("BoardEditor");
-			boardWizard.minSize = boardWizard.maxSize = new Vector2( FixedSize.Width + (MenuWidth * MENU_COUNT), FixedSize.Height );
-			boardWizard.m_savePath = path;
+
 			boardWizard.m_boardPrefab = prefab;
+			boardWizard.m_blockDataSet = dataSet;
+
+			boardWizard.LoadToolResource();
+
+			boardWizard.minSize = boardWizard.maxSize = new Vector2( FixedSize.Width + (MenuWidth * boardWizard.m_boardItems.Length), FixedSize.Height );
+			boardWizard.m_savePath = path;
+
 
 			if( null != prefab )
-			{
+			{  
 				boardWizard.m_boardData = boardWizard.m_boardPrefab.GetComponent<Game.Data.BoardData>();
 				boardWizard.m_boardName = boardWizard.m_boardData.name;
 			}
 		}
 
-		void OnWizardUpdate()
+		void OnFocus()
 		{
+			if(TOOL_DEV)
+			{
+				this.LoadToolResource();
+			}
 
 		}
 
-		void OnFocus()
+		void LoadToolResource()
 		{
-			if( null == m_blankTexture )
-			{
-				m_blankTexture = AssetDatabase.LoadAssetAtPath( "Assets/Editors/Board/Resource/block_blank.png", typeof(Texture2D ))as Texture2D;
-			}
+//			m_boardItems = new System.Action[]{ BoardWindow, CustomRandomWindow, BlockWindow };
+			m_boardItems = new System.Action[]{ BoardWindow, BlockWindow, CustomRandomWindow };
+			m_blockRenderer.Load(m_blockDataSet);
 
-			if( null ==  m_randomTexture )
-			{
-				m_randomTexture = AssetDatabase.LoadAssetAtPath( "Assets/Editors/Board/Resource/block_rand.png", typeof(Texture2D )) as Texture2D;
-			}
+			string front = "Assets/Editors/Board/Resource/";
+			
+			m_itemATexture = AssetDatabaseHelper.LoadAsset<Texture2D>( front + "itemtype_A.png" );
+			m_itemSTexture = AssetDatabaseHelper.LoadAsset<Texture2D>( front + "itemtype_S.png" );
+			m_selectPropertyTexture = AssetDatabaseHelper.LoadAsset<Texture2D>( front + "select_property.png" );
+			m_durableTexture = AssetDatabaseHelper.LoadAsset<Texture2D>( front + "block_durable.png" );
+		}
 
-			if( null == m_itemATexture )
-			{
-				m_itemATexture = AssetDatabase.LoadAssetAtPath( "Assets/Editors/Board/Resource/itemtype_A.png", typeof(Texture2D )) as Texture2D;
-			}
-
-			if( null == m_itemSTexture )
-			{
-				m_itemSTexture = AssetDatabase.LoadAssetAtPath( "Assets/Editors/Board/Resource/itemtype_S.png", typeof(Texture2D )) as Texture2D;
-			}
-
-			if( null == m_selectPropertyTexture )
-			{
-				m_selectPropertyTexture = AssetDatabase.LoadAssetAtPath( "Assets/Editors/Board/Resource/select_property.png", typeof(Texture2D )) as Texture2D;
-			}
-
-			if( null == m_durableTexture )
-			{
-				m_durableTexture = AssetDatabase.LoadAssetAtPath( "Assets/Editors/Board/Resource/block_durable.png", typeof(Texture2D )) as Texture2D;
-			}
+		void OnWizardUpdate()
+		{
 		}
 
 		void OnGUI()
 		{
 			this.DrawBoard();
-			GUI.WindowFunction[] functions 	= new GUI.WindowFunction[]{ BoardWindow, BlockWindow };
-			string[] funcNames 				= { "Board", "Block" };
-			
-			GUIStyle style = GUI.skin.GetStyle("Window");
-			GUIStyleState backgupState = style.onNormal;
-			style.onNormal = style.normal;
 
-			BeginWindows();
+//			this.DrawLine(FixedSize.Width);
 
-			for( int i = 0; i < MENU_COUNT; ++i )
+			Rect windowRect = new Rect( FixedSize.Width, 0, MenuWidth, FixedSize.Height );
+			for( int i = 0; i < m_boardItems.Length; ++i )
 			{
-				GUILayout.Window(i, new Rect( FixedSize.Width + MenuWidth * i, 0, MenuWidth, FixedSize.Height ), functions[i], funcNames[i], style );
+
+				GUILayout.BeginArea(windowRect, m_boardItems[i].Method.Name, GUI.skin.GetStyle("Window") );
+				m_boardItems[i]();
+				GUILayout.EndArea ();
+
+				windowRect.x += MenuWidth;
+				
+//				this.DrawLine (windowRect.x + windowRect.width);
 			}
+		}
 
-			EndWindows();
-
-			style.onNormal = backgupState;
+		public void DrawLine( float width )
+		{
+			Color prevColor = Handles.color;
+			Handles.color = Color.green;
+			Handles.DrawLine( new Vector2( width, 0 ), new Vector2( width, FixedSize.Height ) );
+			Handles.color = prevColor;
 		}
 
 		public void DrawBoard()
 		{
-			Color prevColor = Handles.color;
-			Handles.color = Color.cyan;
-			Handles.DrawLine( new Vector2( FixedSize.Width, 0 ), new Vector2( FixedSize.Width, FixedSize.Height ) );
-			Handles.color = prevColor;
-
 			if( null == m_boardData || null == m_boardData.BlockProperties )
 			{
 				return ;
@@ -157,7 +159,6 @@ namespace BoardEditor
 			Vector2[] vertices = m_vertex.ScaleUP( m_boardData.Pixel ); 
 			//Drawpoly 할라면 맨 뒤에 앞을 연결해 줘야 한다.
 			vertices[0] = vertices[vertices.Length - 1];
-
 			 
 			for( int x = 0; x < m_boardData.BlockProperties.Count; ++x )
 			{
@@ -173,7 +174,7 @@ namespace BoardEditor
 					{
 						if( Event.current.button == 0 ) //left
 						{
-							m_boardData.BlockProperties[x,y].Generate = (GenerateType)m_selected;
+							m_boardData.BlockProperties[x,y].Generate = m_selectGenerate;
 						}
 
 						if( Event.current.button == 1 ) //right
@@ -189,25 +190,22 @@ namespace BoardEditor
 						GUI.color = new Color32(0,0,255,160);
 					}
 
-					int generateType	= (int)m_boardData.BlockProperties[x,y].Generate;
-					Multiple m 			= this.GetDataByGenerate(generateType);
-			
-					GUI.DrawTextureWithTexCoords( rect, m.At<Texture2D>(1), m.At<Rect>(2) );
-
+					this.DrawBoardBlock(rect, m_boardData.BlockProperties[x,y].Generate );
+//
 					Texture2D itemTexture = this.GetTextureByItemType( (Game.BlockItemType)m_boardData.BlockProperties[x,y].ItemType );
 					if( null != itemTexture )
 					{
-						GUI.DrawTextureWithTexCoords( rect, itemTexture, RECT_ONE );
+						GUI.DrawTextureWithTexCoords(rect, itemTexture, Share.UV);
 					}
-
+//
 					if( 0 != m_boardData.BlockProperties[x,y].Durable )
 					{
-						GUI.DrawTextureWithTexCoords( rect, m_durableTexture, RECT_ONE );
+						GUI.DrawTextureWithTexCoords( rect, m_durableTexture, Share.UV );
 					}
-
+//
 					if( m_boardData.BlockProperties[x,y] == m_selectProperty )
 					{
-						GUI.DrawTextureWithTexCoords( rect, m_selectPropertyTexture, RECT_ONE );
+						GUI.DrawTextureWithTexCoords( rect, m_selectPropertyTexture, Share.UV );
 					}
 
 					GUI.color = Color.white;
@@ -215,8 +213,10 @@ namespace BoardEditor
 			}
 		}
 
-		public void BoardWindow( int id )
+		public void BoardWindow()
 		{
+			GUILayout.BeginArea(new Rect(5, 20, InnerWidth, 200 ), "메뉴", GUI.skin.GetStyle ("Window") );
+
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField( "이름", GUILayout.Width (40) );
 			m_boardName = EditorGUILayout.TextField( m_boardName );
@@ -256,20 +256,25 @@ namespace BoardEditor
 
 			}
 
-			if( null == m_boardPrefab )
+
+			if( null != m_boardPrefab )
 			{
+				if( GUILayout.Button("보드 저장", GUILayout.Height (InnerHeight)))
+				{
+					EditorUtility.SetDirty (m_boardPrefab);
+					
+					AssetDatabase.SaveAssets();
+					AssetDatabase.Refresh ();
+				}
+			}
+			else
+			{
+				GUILayout.EndArea ();
+				
 				return ;
 			}
+
 			 
-			if( GUILayout.Button("보드 저장", GUILayout.Height (InnerHeight)))
-			{
-				EditorUtility.SetDirty (m_boardPrefab);
-
-				AssetDatabase.SaveAssets();
-				AssetDatabase.Refresh ();
-			}
-
-
 			EditorGUILayout.ObjectField( m_boardPrefab, typeof(GameObject), true );
 
 			m_boardData.BoardSize.x = EditorGUILayout.FloatField("가로", m_boardData.BoardSize.x);
@@ -280,35 +285,15 @@ namespace BoardEditor
 			{
 				if( null != m_boardData )
 				{
-					BoardShape.Data data = BoardShape.Batch( m_boardData.BoardSize, m_boardData.Pixel );
-
-					if( null != m_boardData.BlockProperties )
-					{
-						for( int x = 0; x < data.container.X.Count; ++x )
-						{
-							for( int y = 0; y < data.container[x].Y.Count; ++y )
-							{
-								if( x >= m_boardData.BlockProperties.X.Count || y >= m_boardData.BlockProperties[x].Y.Count )
-								{
-									continue;
-								} 
-								 
-								data.container[x,y].Generate = m_boardData.BlockProperties[x,y].Generate;
-								data.container[x,y].ItemType = m_boardData.BlockProperties[x,y].ItemType;
-								data.container[x,y].Durable = m_boardData.BlockProperties[x,y].Durable;
-							}
-						}
-					}
-
+					BoardShape.Data data = BoardShape.Batch( m_boardData );
+					
 					m_boardData.BlockProperties = null;
 					m_boardData.BlockProperties = data.container;
 					m_boardData.InnerSize = data.innerSize;
 
-					EditorUtility.SetDirty (m_boardPrefab);
-
 					AssetDatabase.SaveAssets();
 					AssetDatabase.Refresh ();
-
+					 
 					m_selectProperty = null;
 				}
 				else
@@ -318,225 +303,190 @@ namespace BoardEditor
 
 			}
 
+			GUILayout.EndArea ();
+
+
+			GUILayout.BeginArea(new Rect(5, 230, InnerWidth, 320 ), "배경", GUI.skin.GetStyle ("Window") );
+
+			GUILayout.EndArea ();
+
+			GUILayout.BeginArea(new Rect(5, 560, InnerWidth, 150 ), "선택된 블럭", GUI.skin.GetStyle ("Window") );
 			if( null == m_selectProperty )
 			{
 				EditorGUILayout.Separator();
-				EditorGUILayout.Separator();
 				EditorGUILayout.LabelField("블럭을 선택해 주세요." );
-				return ;
-			}
-
-			EditorGUILayout.Separator();
-			EditorGUILayout.Separator();
-			EditorGUILayout.LabelField("블럭 속성");
-			EditorGUILayout.Separator();
-			EditorGUILayout.Separator();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("아이템 타입", GUILayout.Width(80));
-			m_selectProperty.ItemType = (Game.BlockItemType)EditorGUILayout.EnumPopup(m_selectProperty.ItemType, GUILayout.Width(100));
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.Separator();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("내구도", GUILayout.Width(45));
-			m_selectProperty.Durable = EditorGUILayout.IntField(m_selectProperty.Durable, GUILayout.Width (135));
-			EditorGUILayout.EndHorizontal();
-			
-			EditorGUILayout.Separator();
-			
-			bool toggleStart = IsStartField(m_selectPropertyPosition);
-			bool currentToggle = EditorGUILayout.Toggle("시작지점", toggleStart, GUILayout.Width (InnerWidth) );
-			if( toggleStart != currentToggle )
-			{
-				if( true == currentToggle )
-				{
-					m_boardData.StartField.Add (m_selectPropertyPosition);
-				}
-				else
-				{
-					m_boardData.StartField.Remove (m_selectPropertyPosition);
-				}
-			}
-		}
-
-
-
-
-
-		public void BlockWindow( int id )
-		{
-			Rect position = new Rect( 5, 15, 50, 50 );
-
-			if(GUI.Button (position, new GUIContent(m_blankTexture)))
-			{
-			}
-//			if( GUILayout.Button ("Select block set", GUILayout.Height (InnerHeight) ))
-//			{
-//				System.Action<Object> SelectCallback = (Object set) =>
-//				{
-//
-//				};
-//
-//				System.Func<Object, Texture2D> ViewCallback = (Object set) =>
-//				{
-//					return null;
-//				};
-//
-//				ObjectSelectorWizard.ShowWizard<BlockDataSet>("Block selector", SelectCallback, ViewCallback, 2.0f);
-////				if( false == isContinue )
-////				{
-////					return ;
-////				}
-////
-////				AtlasSelectorWizard.ShowWizard
-////				( 
-////                 	(GameObject select ) => 
-////          			{ 
-////						m_boardData.SetAtlas(select);
-////
-////						for( int x = 0; x < m_boardData.BlockProperties.Count; ++x )
-////						{
-////							for( int y = 0; y < m_boardData.BlockProperties[x].Count; ++y )
-////							{
-////								m_boardData.BlockProperties[x,y].Generate = Game.GenerateType.RandomCustomA;
-////							}
-////						}
-////
-////
-////						m_boardData.BlockAtlas.Clear ();
-////
-////						EditorUtility.SetDirty (m_boardData);
-////						
-////						Repaint ();
-////					}
-////				);
-//			}
-//
-			if( null == m_boardData )
-			{
-				return ;
-			}
-
-//			EditorGUILayout.ObjectField(m_boardData.Atlas, typeof(TextureAtlas), false);
-			
-//			if( GUILayout.Button ("추가", GUILayout.Height(InnerHeight)) )
-//			{
-//				SpriteSelectorWizard.ShowWizard
-//				(
-//					m_boardData.Atlas, 
-//					(TextureAtlas.Atlas atlas) =>
-//					{
-//						m_boardData.BlockAtlas.Add ( atlas.name );
-//
-//						EditorUtility.SetDirty (m_boardData);
-//						
-//						Repaint ();
-//					}
-//				);
-//
-//			}
-
-//			m_scrollbar = EditorGUILayout.BeginScrollView(m_scrollbar, GUILayout.Height (480));
-//
-//
-//			Func<int, string, Texture2D, Rect, bool> DrawBlock = (int offset, string name, Texture2D texture, Rect uv)=>
-//			{
-//				bool pushed = false;
-//				int height = 7 + ( offset * 67 );
-//				if( GUILayout.Button ("", GUILayout.Width (64), GUILayout.Height ( 64 )))
-//				{
-//					pushed = true;
-//				}
-//				
-//				GUI.DrawTextureWithTexCoords(new Rect(8, height, 56, 56 ), texture, uv );
-//				GUI.Label(new Rect(74, height + 20, 100, 56 ), name );
-//
-//				return pushed;
-//			};
-//
-//			int additionCount = 0;
-//
-//			if( DrawBlock(additionCount++, "공백", m_blankTexture, RECT_ONE ) )
-//			{
-//				m_selected = (int)Game.GenerateType.Blank;
-//			}
-//
-//			if( DrawBlock(additionCount++, "무작위", m_randomTexture, RECT_ONE ) )
-//			{
-//				m_selected = (int)Game.GenerateType.RandomSubA;
-//			}
-//
-//			for( int i = 0; i < m_boardData.BlockAtlas.Count; ++i )
-//			{
-//				TextureAtlas.Atlas atlas = m_boardData.GetAtlas (i);
-//				
-//				if( DrawBlock(additionCount + i, atlas.name, m_boardData.Atlas.TargetTexture, atlas.UV ) )
-//				{
-//					m_selected = i;
-//				}
-//			}
-//
-//			EditorGUILayout.EndScrollView();
-//
-//			Multiple data = this.GetDataByGenerate(m_selected);
-//			string selectName = data.First<string>();
-//			Texture2D selectTex = data.Next<Texture2D>();
-//			Rect selectUV = data.Next<Rect>();
-//
-//			GUI.Label(new Rect(85, 650, 100, 56 ), selectName );
-//			GUI.DrawTextureWithTexCoords(new Rect(10, 622, 64, 64 ), selectTex, selectUV );
-
-		}
-
-//		public void PropertyWindow( int id )
-//		{
-//
-//
-//		}
-
-		private Multiple GetDataByGenerate(int genType )
-		{
-			Multiple m = new Multiple(3);
-			m.Set(0, "무작위" );
-			m.Set(1, m_randomTexture );
-			m.Set(2, RECT_ONE );
-
-			return m;
-
-			if( genType == (int)Game.GenerateType.RandomSubA)
-			{
-				m.Set(0, "무작위" );
-				m.Set(1, m_randomTexture );
-				m.Set(2, RECT_ONE );
-			}
-
-			else if( genType == (int)Game.GenerateType.Blank )
-			{
-				m.Set(0, "공백" );
-				m.Set(1, m_blankTexture );
-				m.Set(2, RECT_ONE );
-
 			}
 			else
 			{
-//				if( m_boardData.BlockAtlas.Count <= genType )
-//				{
-//					m.Set(0, "없음" );
-//					m.Set(1, EditorGUIUtility.whiteTexture );
-//					m.Set(2, RECT_ONE );
-//				}
-//				else
-//				{
-//					TextureAtlas.Atlas atlas = m_boardData.GetAtlas(genType);
-//					m.Set(0, atlas.name );
-//					m.Set(1, m_boardData.Atlas.TargetTexture );
-//					m.Set(2, atlas.UV );
-//				}
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("아이템 타입", GUILayout.Width(80));
+				m_selectProperty.ItemType = (Game.BlockItemType)EditorGUILayout.EnumPopup(m_selectProperty.ItemType, GUILayout.Width(100));
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("내구도", GUILayout.Width(45));
+				m_selectProperty.Durable = EditorGUILayout.IntField(m_selectProperty.Durable, GUILayout.Width (135));
+				EditorGUILayout.EndHorizontal();
+				
+				bool toggleStart = IsStartField(m_selectPropertyPosition);
+				bool currentToggle = EditorGUILayout.Toggle("시작지점", toggleStart, GUILayout.Width (InnerWidth) );
+				if( toggleStart != currentToggle )
+				{
+					if( true == currentToggle )
+					{
+						m_boardData.StartField.Add (m_selectPropertyPosition);
+					}
+					else
+					{
+						m_boardData.StartField.Remove (m_selectPropertyPosition);
+					}
+				}
 			}
 
-			return m;
+			GUILayout.EndArea();
+		}
+
+		public void BlockWindow()
+		{
+			System.Action<GenerateType> CodeCallback = (GenerateType generate) =>
+			{  
+				m_selectGenerate = generate;
+
+				Repaint();
+			};
+
+			BeginWindows();
+
+			//fixed block window
+			BlockShareRender shareRenderer = new BlockShareRender(m_blockDataSet, new Vector2(10, 20), 1.08f, CodeCallback );
+			Rect drawedRect = shareRenderer.Draw ();
+
+			float tint = 12.0f;
+			float interval = 15.0f;
+			float size = 50.0f;
+
+			System.Action<int> DrawShareBlocks = (int start) =>
+			{
+				float offset = tint;
+				
+				for( int subIndex = 0; subIndex < BlockConst.SubCount; ++subIndex )
+				{
+					Rect drawRect = new Rect( offset, 19, size, size);
+					GenerateType generate = (GenerateType)(subIndex + start);
+					if( GUI.Button(drawRect, "" ) )
+					{
+						m_selectGenerate = generate;
+					}
+
+					m_blockRenderer.Draw( drawRect, generate );
+				
+					offset += interval + size;
+				}
+			};
+
+			//random block window
+			drawedRect.y += interval;
+			GUI.WindowFunction RandomBlocks = (int id) =>
+			{
+				DrawShareBlocks((int)GenerateType.RandomSubA);
+			};
+
+			GUI.Window (10000, drawedRect, RandomBlocks, "Random");
+
+			//phase block window
+			drawedRect.y += interval + drawedRect.height;
+			GUI.WindowFunction SpecialBlocks = (int id) =>
+			{
+				DrawShareBlocks((int)GenerateType.RandomPhaseSubA);
+			};
+			
+			GUI.Window (10001, drawedRect, SpecialBlocks, "Random Phase");
+
+			EndWindows();
+
+		}
+		 
+		public void CustomRandomWindow()
+		{ 
+			if( null == m_boardData )
+			{
+				EditorGUILayout.LabelField("보드가 없습니다.");
+				return ;
+			}
+
+			float tint = 5;
+			float height = 20;
+			Rect position = new Rect( tint, height, InnerWidth, InnerHeight );
+
+			float blockSize = 55;
+
+			for( int i = 0; i < BlockConst.CustomCount; ++i )  
+			{
+				float blockHeight = height + ( i * blockSize ) + ( i * tint );
+				Rect drawRect = new Rect( tint + tint, blockHeight, blockSize, blockSize );
+				
+				if( i < m_boardData.CustomRandom.Length )
+				{
+					if( GUI.Button ( drawRect, "" ) )
+					{
+						if( Event.current.button == 0 )
+						{
+							m_selectGenerate = (GenerateType)((int)(GenerateType.RandomCustomA) + i);
+						}
+						else
+						{
+							System.Action<BoardData.CustomBlocks> ModifyCallback = (BoardData.CustomBlocks blocks) =>
+							{
+								Repaint ();
+							};
+
+							BlockRandomWizard.ShowWizard(m_blockDataSet, m_boardData.CustomRandom[i], ModifyCallback);
+						}
+					}
+
+					GenerateType[] generateArray = m_boardData.CustomRandom[i].Generates.ToArray();
+					m_blockRenderer.DrawMultiple( drawRect, generateArray );
+
+					float smallBlockSize = 20;
+					float beginLeft = drawRect.x + blockSize + tint;
+					float beginTop = drawRect.y + 5;
+					float advanceLeft = beginLeft;
+
+					for( int enumIndex = 0; enumIndex < generateArray.Length; ++enumIndex )
+					{
+						float x = enumIndex % 8;
+						float y = enumIndex / 8;
+						
+						Rect smallImageRect = new Rect(beginLeft + x * smallBlockSize, beginTop + y * smallBlockSize, smallBlockSize, smallBlockSize);
+
+						m_blockRenderer.Draw ( smallImageRect, generateArray[enumIndex]);
+
+//						if( (enumIndex + 1 ) % 8 == 0 )
+//						{
+//							advanceLeft = beginLeft;
+//							beginTop += smallBlockSize;
+//						}
+					}
+
+				}
+				else
+				{
+					GUI.enabled = false;
+					GUI.Button ( drawRect, "" );
+					GUI.enabled = true;
+				}
+
+			}
+
+			GUI.BeginGroup ( new Rect( 5, 620, InnerWidth, 90 ), "Selection", GUI.skin.GetStyle("Window") );
+
+			DrawBoardBlock( new Rect( 0, 15, 80, 80 ), m_selectGenerate );
+
+			Rect labelRect = new Rect( 90, 45, 120, 50 );
+			GUI.Label(labelRect, m_selectGenerate.ToString());
+			GUI.EndGroup ();
+
 		}
 
 		private Texture2D GetTextureByItemType( Game.BlockItemType itemType )
@@ -557,9 +507,9 @@ namespace BoardEditor
 			boardData.BoardSize.x = setting.DefaultWidth;
 			boardData.BoardSize.y = setting.DefaultHeight;
 			boardData.Pixel = setting.DefaultPixel;
-//			boardData.Atlas = ( null == setting.DefaultAtlas ) ? null : setting.DefaultAtlas.GetComponent<TextureAtlas>();
-//			boardData.BlockAtlas.AddRange(setting.DefaultAtlasElems);
+			boardData.BlockDataSet = setting.DefaultBlockSet.GetComponent<BlockDataSet>();
 
+			m_blockRenderer.Load (boardData.BlockDataSet);
 		}
 
 		private bool IsStartField( Vector2 position )
@@ -574,6 +524,21 @@ namespace BoardEditor
 
 			return false;
 		}
+
+		private void DrawBoardBlock( Rect rect, GenerateType generate )
+		{
+			if( BlockEnumSupporter.IsCustomRandom( generate ) )
+			{
+				int randomOffset = (int)generate - (int)GenerateType.RandomCustomA;
+				
+				m_blockRenderer.DrawMultiple(rect, m_boardData.CustomRandom[randomOffset].Generates.ToArray());
+			}
+			else
+			{
+				m_blockRenderer.Draw (rect, generate);
+			}
+		}
+		
 	}
 }
 

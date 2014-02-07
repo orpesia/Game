@@ -34,6 +34,11 @@ namespace Unnamed
 		{
 			return ( null == AssetDatabase.LoadAssetAtPath(path, typeof(Object)) ) ? false : true;
 		}
+
+		public static T LoadAsset<T>(string path) where T : class
+		{
+			return AssetDatabase.LoadAssetAtPath(path, typeof(T)) as T;
+		}
 	}
 }
 

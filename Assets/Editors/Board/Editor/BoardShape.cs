@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -25,8 +25,11 @@ namespace BoardEditor
 			
 		}
 
-		static public Data Batch(Vector2 size, float pixel )
+		static public Data Batch(BoardData boardData)
 		{
+			Vector2 size = boardData.BoardSize;
+			float pixel = boardData.Pixel;
+
 			Data data = new Data();
 
 			float width = pixel * Width;
@@ -61,7 +64,30 @@ namespace BoardEditor
 
 			}
 
+			Backup(data, boardData);
+
 			return data;
+		}
+
+		public static void Backup(Data data, BoardData boardData)
+		{
+			if( null != boardData.BlockProperties )
+			{
+				for( int x = 0; x < data.container.X.Count; ++x )
+				{
+					for( int y = 0; y < data.container[x].Y.Count; ++y )
+					{
+						if( x >= boardData.BlockProperties.X.Count || y >= boardData.BlockProperties[x].Y.Count )
+						{
+							continue;
+						} 
+						
+						data.container[x,y].Generate = boardData.BlockProperties[x,y].Generate;
+						data.container[x,y].ItemType = boardData.BlockProperties[x,y].ItemType;
+						data.container[x,y].Durable = boardData.BlockProperties[x,y].Durable;
+					}
+				}
+			}
 		}
 	}
 }

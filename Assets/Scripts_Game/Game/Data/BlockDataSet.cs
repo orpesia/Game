@@ -70,7 +70,34 @@ namespace Game.Data
 			Tree.Clear ();
 		}
 
+		public KeyValue FindDataByCode(BlockCode code)
+		{
+			if( Data.Count <= 0 )
+			{
+				return null;
+			}
+			
+			foreach( BlockDataSet.KeyValue kv in Data )
+			{
+				if( kv.code == code )
+				{
+					return kv;
+				}
+			}
+			
+			return null;
+		}
 
+		public TextureAtlas.Atlas FindSpriteByCode(BlockCode code)
+		{
+			KeyValue keyValue = this.FindDataByCode(code);
+			if( null == keyValue )
+			{
+				return null;
+			}
+
+			return Atlas.GetSpriteByName( keyValue.name );
+		}
 
 	}
 }

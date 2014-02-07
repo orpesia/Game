@@ -35,6 +35,19 @@ namespace Game.Data
 
 		};
 
+		[System.Serializable]
+		public class CustomBlocks
+		{
+			public List<GenerateType> Generates = new List<GenerateType>();
+		}
+
+		[System.Serializable]
+		public class CustomRandomBlocks
+		{
+			public List<CustomBlocks> Blocks = new List<CustomBlocks>();
+			
+		}
+
 		[HideInInspector] public BlockDataSet BlockDataSet; //동적으로 붇임.
 
 		[HideInInspector][SerializeField] public BlockList BlockProperties;
@@ -42,7 +55,8 @@ namespace Game.Data
 		[HideInInspector][SerializeField] public Vector2 InnerSize;
 		[HideInInspector][SerializeField] public float Pixel;
 		[HideInInspector][SerializeField] public List<Vector2> StartField = new List<Vector2>();
-
+//		[HideInInspector][SerializeField] public CustomRandomBlocks CustomRandom = new CustomRandomBlocks();
+		[HideInInspector][SerializeField] public CustomBlocks[] CustomRandom = new CustomBlocks[BlockConst.CustomCount];
 
 		public BoardData ()
 		{

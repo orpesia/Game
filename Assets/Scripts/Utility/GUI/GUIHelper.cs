@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Unnamed
 {
-	public class ButtonHelper
+	public class GUIHelper
 	{
 		public static bool ImageUVButton( Rect rect, Texture2D texture, Rect UV )
 		{
@@ -19,20 +19,25 @@ namespace Unnamed
 
 			if( null != texture )
 			{
-				Rect smallSize = rect;
-				
-				float decX = rect.width * 0.1f;
-				float decY = rect.height * 0.1f;
-				
-				smallSize.x += decX;
-				smallSize.y += decY;
-				smallSize.xMax -= decX * 2;
-				smallSize.yMax -= decY * 2;
+				Rect smallSize = GetSmallRect(rect);
 
 				GUI.DrawTextureWithTexCoords( smallSize, texture, UV );
 			}
 
 			return isPress;
+		}
+
+		public static Rect GetSmallRect(Rect rect)
+		{
+			float x = rect.width * 0.05f;
+			float y = rect.height * 0.05f;
+			
+			rect.x += x;
+			rect.y += x;
+			rect.xMax -= y * 2;
+			rect.yMax -= y * 2;
+
+			return rect;
 		}
 	}
 }

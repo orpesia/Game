@@ -96,7 +96,6 @@ namespace BoardEditor
 
 			if( GUILayout.Button ("Save block set"))
 			{
-
 				EditorUtility.SetDirty(m_prefab);
 				
 				AssetDatabase.SaveAssets();
@@ -116,85 +115,37 @@ namespace BoardEditor
 
 			if(true == isSelected)
 			{
-				Action<GameObject> selectCallback = (GameObject atlas)=>
+				Action<TextureAtlas> selectCallback = (TextureAtlas atlas)=>
 				{
-					TextureAtlas textureAtlas = atlas.GetComponent<TextureAtlas>();
-					m_dataset.Atlas = textureAtlas;
+					m_dataset.Atlas = atlas;
 
 					Repaint();
-				};
+				}; 
 
-				AtlasSelectorWizard.ShowWizard(selectCallback);
+				SelectWizard.AtlasSelector(selectCallback);
 			}
 
-			//max 400
-			Rect windowPosition = new Rect(5, 300, 190, 80 );
 
-			BeginWindows();
-			GUI.Window (0, windowPosition, Blank, "Blank" );
-
-			windowPosition.y += windowPosition.height + 10;
-			GUI.Window ((int)BlockType.TypeA, windowPosition, Blocks, "AType" );
-
-			windowPosition.y += windowPosition.height + 10;
-			GUI.Window ((int)BlockType.TypeB, windowPosition, Blocks, "BType" );
-
-			windowPosition.y += windowPosition.height + 10;
-			GUI.Window ((int)BlockType.TypeC, windowPosition, Blocks, "CType" );
-
-			windowPosition.y += windowPosition.height + 10;
-			GUI.Window ((int)BlockType.TypeD, windowPosition, Blocks, "DType" );
-
-			windowPosition.y += windowPosition.height + 10;
-			GUI.Window ((int)BlockType.TypeE, windowPosition, Blocks, "EType" );
-
-			EndWindows ();
-		
-		}
-
-		void Blank(int id) 
-		{
-			if( ImageButton(new Rect( 5, 22, 50, 50 ), "Blank", m_dataset.Atlas, BlockCode.Blank) )
+			Action<GenerateType> Callback = (GenerateType generate)=>
 			{
 				Action<TextureAtlas.Atlas> action = (TextureAtlas.Atlas atlas) =>
 				{
-					this.AddOrReplace(BlockCode.Blank, atlas.name);
-
+					this.AddOrReplace(generate, atlas.name);
+					
 					Repaint ();
 				};
 
-				SpriteSelectorWizard.ShowWizard( m_dataset.Atlas, action );
-			}
+				SelectWizard.SpriteSelector(m_dataset.Atlas, action);
+			};
+
+			BlockShareRender shareRenderer = new BlockShareRender(m_dataset, new Vector2(5, 300), 1.0f, Callback);
+			shareRenderer.Draw(this);
 		}
 
-		void Blocks( int blockType )
+		void AddOrReplace(GenerateType generate, string name)
 		{
-			string[] subName = { "SubA", "SubB", "SubC" };
-
-			for( int codeIndex = 0; codeIndex < BlockConst.SubCount; ++codeIndex )
-			{
-
-				BlockCode blockCode = ((BlockType)blockType).ToBlockCode(codeIndex);
-
-				//15는 사이간격.
-				float left = 5 + ( codeIndex * 15 ) + ( codeIndex * 50);
-				if( ImageButton(new Rect( left, 22, 50, 50 ), subName[codeIndex], m_dataset.Atlas, (BlockCode)blockCode) )
-				{
-					Action<TextureAtlas.Atlas> action = (TextureAtlas.Atlas atlas) =>
-					{
-						this.AddOrReplace(blockCode, atlas.name);
-						
-						Repaint ();
-					};
-					
-					SpriteSelectorWizard.ShowWizard( m_dataset.Atlas, action );
-				}
-			}
-		}
-
-		void AddOrReplace(BlockCode code, string name)
-		{
-			BlockDataSet.KeyValue keyValue = this.FindDataByCode(code);
+			BlockCode code = BlockEnumSupporter.GetCode (generate);
+			BlockDataSet.KeyValue keyValue = m_dataset.FindDataByCode(code);
 
 			if( null == keyValue )
 			{
@@ -206,43 +157,6 @@ namespace BoardEditor
 			}
 		}
 
-		bool ImageButton(Rect pos, string name, TextureAtlas atlas, BlockCode code )
-		{
-			bool isPress = false;
-			BlockDataSet.KeyValue keyValue = this.FindDataByCode(code);
-			if( null == keyValue )
-			{
-				isPress = GUI.Button (pos, name );
-			}
-			else
-			{
-				TextureAtlas.Atlas sprite = atlas.GetAtlasByName( keyValue.name );
-				if( null != sprite )
-				{
-					isPress = ButtonHelper.ImageUVButton( pos, atlas.TargetTexture, sprite.UV );
-				}
-			}
-
-			return isPress;
-		}
-
-		public BlockDataSet.KeyValue FindDataByCode( BlockCode code )
-		{
-			if( null == m_dataset )
-			{
-				return null;
-			}
-
-			foreach( BlockDataSet.KeyValue kv in m_dataset.Data )
-			{
-				if( kv.code == code )
-				{
-					return kv;
-				}
-			}
-
-			return null;
-		}
 	}
 }
 

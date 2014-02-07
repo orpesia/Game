@@ -56,7 +56,7 @@ namespace BoardEditor
 
 			if( isPress )
 			{
-				System.Action<Object> SelectCallback = (Object obj) =>
+				System.Action<System.Object> SelectCallback = (System.Object obj) =>
 				{
 					BlockDataSet target = obj as BlockDataSet;
 					m_setting.DefaultBlockSet 		= target.gameObject;
@@ -65,13 +65,13 @@ namespace BoardEditor
 					Repaint ();
 				};
 				
-				System.Func<Object, Texture2D> ViewCallback = (Object obj) =>
+				System.Func<System.Object, ObjectViewInfo> ViewCallback = (System.Object obj) =>
 				{
 					BlockDataSet target = obj as BlockDataSet;
-					return target.Atlas.TargetTexture;
+					return new ObjectViewInfo(target.Atlas.TargetTexture, Share.UV );
 				};
 				
-				ObjectSelectorWizard.ShowWizard<BlockDataSet>("Block selector", SelectCallback, ViewCallback, 1.5f );
+				ObjectSelectWizard.ShowWizard<BlockDataSet>("Block selector", SelectCallback, ViewCallback, 1.5f );
 			}
 
 			EditorGUILayout.Separator();

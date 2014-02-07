@@ -16,7 +16,7 @@ using System.Linq.Expressions;
 
 namespace Unnamed
 {
-	public static class ObjectExtension
+	public static class ObjectExtensions
 	{
 		static public Delegate FunctionByString<T> ( this T value, string func )
 		{

@@ -138,8 +138,12 @@ namespace BoardEditor
 				SelectWizard.SpriteSelector(m_dataset.Atlas, action);
 			};
 
-			BlockShareRender shareRenderer = new BlockShareRender(m_dataset, new Vector2(5, 300), 1.0f, Callback);
-			shareRenderer.Draw(this);
+			if( m_dataset.Atlas != null )
+			{
+				BlockShareRender shareRenderer = new BlockShareRender(m_dataset, new Vector2(5, 300), 1.0f, Callback);
+				shareRenderer.Draw(this);
+			}
+
 		}
 
 		void AddOrReplace(GenerateType generate, string name)
